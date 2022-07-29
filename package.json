@@ -1,36 +1,51 @@
 {
-  "name": "bench-template",
+  "name": "github-board-slack-notifications",
   "version": "1.0.0",
-  "description": "Template to start a new repository on the bench",
-  "main": "index.js",
+  "description": "The purpose of this project is to sent notifications to a Slack channel for any changes that are performed in a Github board (Projects beta). The Github board and Slack channel pairs are configurable.",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 0",
-    "prepare": "husky install"
+    "test": "tap",
+    "prepare": "husky install",
+    "build": "esbuild src/index.js --bundle --minify --platform=node --target=node14 --outbase=src --outdir=dist",
+    "cdk": "cdk",
+    "deploy": "npm run build && cdk deploy",
+    "deploy:cd": "npm run build && cdk deploy --require-approval never",
+    "diff": "cdk diff",
+    "lint:fix": "eslint . --fix",
+    "synth": "npm run build && cdk synth"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nearform/bench-template.git"
+    "url": "git+https://github.com/nearform/github-board-slack-notifications.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nearform/bench-template/issues"
+    "url": "https://github.com/nearform/github-board-slack-notifications/issues"
   },
-  "homepage": "https://github.com/nearform/bench-template#readme",
+  "homepage": "https://github.com/nearform/github-board-slack-notifications#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
+    "@istanbuljs/esm-loader-hook": "^0.2.0",
+    "aws-cdk": "^2.33.0",
+    "esbuild": "^0.14.51",
     "eslint": "^8.20.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
-    "prettier": "^2.7.1"
+    "prettier": "^2.7.1",
+    "tap": "^16.3.0"
   },
   "lint-staged": {
     "*.{js,jsx}": "eslint --cache --fix"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.33.0",
+    "constructs": "^10.1.60"
   }
 }

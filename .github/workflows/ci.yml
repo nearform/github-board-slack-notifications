@@ -1,28 +1,19 @@
-name: Continuous Integration
-
-on: 
-  push:
-   branches:
-    - master
-  pull_request:
-
+name: ci
+on: [push, pull_request]
 jobs:
-  test:
-    name: Lint and test
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version-file: '.nvmrc'
-      - run: |
-          npm ci
-          npm run lint
-          npm test
+      - run: npm i
+      - run: npm run lint
+      - run: npm test
 
   automerge:
-    name: Merge dependabot's PRs
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -30,4 +21,4 @@ jobs:
     steps:
       - uses: fastify/github-action-merge-dependabot@v3
         with:
-          github-token: ${{ secrets.github_token }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}

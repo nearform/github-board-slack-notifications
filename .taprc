@@ -1,0 +1,4 @@
+node-arg:
+  - --no-warnings
+  - --experimental-loader
+  - "@istanbuljs/esm-loader-hook"
