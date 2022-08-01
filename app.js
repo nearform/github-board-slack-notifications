@@ -1,10 +1,13 @@
 'use strict'
 
-const path = require('path')
-const AutoLoad = require('fastify-autoload')
-const Env = require('fastify-env')
-const Cors = require('fastify-cors')
-const S = require('fluent-json-schema')
+import path from 'path'
+import AutoLoad from '@fastify/autoload'
+import Env from '@fastify/env'
+import Cors from '@fastify/cors'
+import S from 'fluent-json-schema'
+import * as url from 'url'
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 
 async function App(fastify, opts) {
   fastify.register(Env, {
@@ -31,4 +34,4 @@ async function App(fastify, opts) {
   })
 }
 
-module.exports = App
+export default App

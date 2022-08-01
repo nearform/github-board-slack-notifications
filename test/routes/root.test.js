@@ -1,7 +1,8 @@
 'use strict'
 
-const { test } = require('tap')
-const { build } = require('../helper')
+import { test } from 'tap'
+
+import { build } from '../helper.js'
 
 test('default root route', async t => {
   const app = await build(t)
