@@ -14,7 +14,8 @@
     "deploy:cd": "npm run build && cdk deploy --require-approval never",
     "diff": "cdk diff",
     "lint:fix": "eslint . --fix",
-    "synth": "npm run build && cdk synth"
+    "synth": "npm run build && cdk synth",
+    "dev": "fastify start -w -l info -P app.js"
   },
   "repository": {
     "type": "git",
@@ -42,10 +43,19 @@
     "tap": "^16.3.0"
   },
   "lint-staged": {
-    "*.{js,jsx}": "eslint --cache --fix"
+    "*.{js,jsx}": "eslint --cache --fix",
+    "*.js": "eslint --cache --fix"
   },
   "dependencies": {
     "aws-cdk-lib": "^2.33.0",
-    "constructs": "^10.1.60"
+    "constructs": "^10.1.60",
+    "fastify": "^4.3.0",
+    "fastify-autoload": "^3.13.0",
+    "fastify-cli": "^4.4.0",
+    "fastify-cors": "^6.1.0",
+    "fastify-env": "^2.2.0",
+    "fastify-plugin": "^4.0.0",
+    "fastify-sensible": "^3.2.0",
+    "fluent-json-schema": "^3.1.0"
   }
 }
