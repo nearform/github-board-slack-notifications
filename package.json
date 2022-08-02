@@ -48,7 +48,6 @@
   "dependencies": {
     "@slack/bolt": "^3.12.1",
     "aws-cdk-lib": "^2.33.0",
-    "constructs": "^10.1.60",
     "fastify": "^4.3.0",
     "@fastify/autoload": "^5.1.0",
     "fastify-cli": "^4.4.0",
