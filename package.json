@@ -8,14 +8,14 @@
     "lint": "eslint .",
     "test": "tap",
     "prepare": "husky install",
-    "build": "esbuild src/index.js --bundle --minify --platform=node --target=node14 --outbase=src --outdir=dist",
+    "build": "esbuild src/app.js --bundle --minify --platform=node --target=node16 --outbase=src --outdir=dist",
     "cdk": "cdk",
     "deploy": "npm run build && cdk deploy",
     "deploy:cd": "npm run build && cdk deploy --require-approval never",
     "diff": "cdk diff",
     "lint:fix": "eslint . --fix",
     "synth": "npm run build && cdk synth",
-    "dev": "fastify start -w -l info -P app.js"
+    "dev": "fastify start -w -l info -P src/app.js"
   },
   "repository": {
     "type": "git",

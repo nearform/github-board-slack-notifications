@@ -7,7 +7,7 @@ import Cors from '@fastify/cors'
 import S from 'fluent-json-schema'
 import * as url from 'url'
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
+const __dirname = url.fileURLToPath(new URL('..', import.meta.url))
 
 async function App(fastify, opts) {
   fastify.register(Env, {
