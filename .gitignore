@@ -12,3 +12,8 @@ node_modules
 nyc_output
 .cdk.staging
 cdk.out
+dist
+coverage
+.nyc_output
+logs
+vscode
