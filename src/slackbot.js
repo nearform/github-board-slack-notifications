@@ -14,6 +14,7 @@ export async function sendIssueUpdated({
   previousStatus,
   nextStatus,
 }) {
+  // https://slack.dev/bolt-js/concepts#web-api
   return await app.client.chat.postMessage({
     channel: config.SLACK_CHANNEL,
     blocks: [
