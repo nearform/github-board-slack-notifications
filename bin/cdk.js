@@ -18,6 +18,6 @@ new CdkStack(app, 'Github-Board-Slack-Notifications', {
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
   env: {
     account: process.env.AWS_ACCOUNT_ID,
-    region: process.env.AWS_REGION
-  }
+    region: process.env.AWS_REGION,
+  },
 })
