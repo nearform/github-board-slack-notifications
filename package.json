@@ -45,7 +45,11 @@
     "*.{js,jsx}": "eslint --cache --fix"
   },
   "dependencies": {
+    "@slack/bolt": "^3.12.1",
     "aws-cdk-lib": "^2.33.0",
-    "constructs": "^10.1.60"
+    "constructs": "^10.1.60",
+    "desm": "^1.3.0",
+    "env-schema": "^5.0.0",
+    "fluent-json-schema": "^3.1.0"
   }
 }
