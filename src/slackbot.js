@@ -4,24 +4,38 @@ const { App } = pkg
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
-  token: config.SLACK_BOT_TOKEN,
+  token: config.SLACK_TOKEN,
   signingSecret: config.SLACK_SIGNING_SECRET,
 })
 
-;(async () => {
-  // Start your app
-  await app.start(process.env.PORT || 3000)
+export async function sendIssueUpdated({
+  link,
+  title,
+  previousStatus,
+  nextStatus,
+}) {
+  return await app.client.chat.postMessage({
+    channel: config.SLACK_CHANNEL,
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `Issue: <${link}|${title}> was moved from ${previousStatus} to ${nextStatus}`,
+        },
+      },
+    ],
+  })
+}
 
-  try {
-    const result = await app.client.chat.postMessage({
-      channel: config.CHANNEL_ID,
-      text: 'Hello world! 👋',
-    })
-
-    console.log('****', { result })
-  } catch (error) {
-    console.error('****', { error })
-  }
-
-  console.log('⚡️ Bolt app is running!')
-})()
+/**
+ * Example usage
+ */
+// (async () => {
+//   await sendIssueUpdated({
+//     link: 'www.github.com',
+//     title: 'some issue',
+//     previousStatus: 'TODO',
+//     nextStatus: 'Closed',
+//   })
+// })()

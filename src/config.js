@@ -5,9 +5,9 @@ import envSchema from 'env-schema'
 const schema = S.object()
   .prop('AWS_ACCOUNT_ID', S.string().required())
   .prop('AWS_REGION', S.string().required())
-  .prop('SLACK_BOT_TOKEN', S.string().required())
+  .prop('SLACK_TOKEN', S.string().required())
   .prop('SLACK_SIGNING_SECRET', S.string().required())
-  .prop('SLACK_CHANNEL_ID', S.string().required())
+  .prop('SLACK_CHANNEL', S.string().required())
 
 const config = envSchema({
   schema,
