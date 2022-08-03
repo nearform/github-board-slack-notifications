@@ -1,5 +1,6 @@
 'use strict'
 import S from 'fluent-json-schema'
+import { verifyRequest } from '../lib/verify-request.js'
 
 const schema = {
   body: S.object()
@@ -26,7 +27,11 @@ const schema = {
  * @type {import('fastify').FastifyPluginAsync}
  */
 export default async function (fastify) {
-  fastify.post('/webhook', { schema }, async (/*request, reply*/) => {
-    return { ok: true }
-  })
+  fastify.post(
+    '/webhook',
+    { schema, preHandler: verifyRequest },
+    async (/*request, reply*/) => {
+      return { ok: true }
+    }
+  )
 }
