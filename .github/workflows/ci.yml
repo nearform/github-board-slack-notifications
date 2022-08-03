@@ -15,6 +15,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
+        env:
           SLACK_TOKEN: ${{ secrets.DEV_SLACK_TOKEN }}
           SLACK_SIGNING_SECRET: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
           SLACK_CHANNEL: ${{ secrets.DEV_SLACK_CHANNEL }}
