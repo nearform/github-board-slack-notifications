@@ -6,6 +6,7 @@ const schema = S.object()
   .prop('SLACK_SIGNING_SECRET', S.string().required())
   .prop('SLACK_CHANNEL', S.string().required())
   .prop('ORG_WEBHOOK_SECRET', S.string().required())
+  .prop('ORG_ACCESS_TOKEN', S.string().required())
 
 const config = envSchema({
   schema,

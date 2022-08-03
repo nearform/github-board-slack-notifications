@@ -23,6 +23,7 @@ jobs:
             SLACK_SIGNING_SECRET: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
             SLACK_CHANNEL: ${{ secrets.DEV_SLACK_CHANNEL }}
             ORG_WEBHOOK_SECRET: ${{ secrets.ORG_WEBHOOK_SECRET }}
+            ORG_ACCESS_TOKEN: ${{ secrets.ORG_ACCESS_TOKEN }}
         run: npm test
 
   automerge:
