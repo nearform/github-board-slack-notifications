@@ -48,7 +48,10 @@ test('POST /webhook', async t => {
             created_at: '2022-05-20T21:20:57Z',
             updated_at: '2022-05-20T21:20:57Z',
             archived_at: null,
-            creator: {},
+            creator: {
+              login: 'john_doe',
+              html_url: 'www.github.com/john_doe',
+            },
           },
         },
       })
@@ -69,7 +72,10 @@ test('POST /webhook', async t => {
         created_at: '2022-05-20T21:20:57Z',
         updated_at: '2022-05-20T21:20:57Z',
         archived_at: null,
-        creator: {},
+        creator: {
+          login: 'john_doe',
+          html_url: 'www.github.com/john_doe',
+        },
       },
     }
     const signature = createSignature(body, config.ORG_WEBHOOK_SECRET)
