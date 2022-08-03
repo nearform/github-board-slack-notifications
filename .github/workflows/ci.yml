@@ -15,15 +15,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
+      - run: npm i
+      - run: npm run lint
+      - name: Test
         env:
-          SLACK_TOKEN: ${{ secrets.DEV_SLACK_TOKEN }}
-          SLACK_SIGNING_SECRET: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
-          SLACK_CHANNEL: ${{ secrets.DEV_SLACK_CHANNEL }}
-          ORG_WEBHOOK_SECRET: ${{ secrets.ORG_WEBHOOK_SECRET }}
-      - run: |
-          npm ci
-          npm run lint
-          npm test
+            SLACK_TOKEN: ${{ secrets.DEV_SLACK_TOKEN }}
+            SLACK_SIGNING_SECRET: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
+            SLACK_CHANNEL: ${{ secrets.DEV_SLACK_CHANNEL }}
+            ORG_WEBHOOK_SECRET: ${{ secrets.ORG_WEBHOOK_SECRET }}
+        run: npm test
 
   automerge:
     name: Merge dependabot's PRs
