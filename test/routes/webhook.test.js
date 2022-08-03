@@ -72,7 +72,7 @@ test('POST /webhook', async t => {
         creator: {},
       },
     }
-    const signature = createSignature(body, config.GITHUB_WEBHOOK_SECRET)
+    const signature = createSignature(body, config.ORG_WEBHOOK_SECRET)
     const res = await app.inject({
       url: '/webhook',
       method: 'POST',

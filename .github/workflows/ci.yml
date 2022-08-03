@@ -15,6 +15,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
+          slack_token: ${{ secrets.dev_slack_token }}
+          slack_signing_secret: ${{ secrets.dev_slack_signing_secret }}
+          slack_channel: ${{ secrets.dev_slack_channel }}
       - run: |
           npm ci
           npm run lint
