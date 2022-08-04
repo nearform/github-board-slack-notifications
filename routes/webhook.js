@@ -45,7 +45,6 @@ export default async function (fastify) {
     { schema, preHandler: verifyRequest },
     async request => {
       const activityType = webhook.getActivity(request.body)
-      console.log(request.body)
 
       const id = request.body.projects_v2_item.node_id
       const installationId = request.body.installation.id
