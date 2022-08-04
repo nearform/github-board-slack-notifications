@@ -3,7 +3,8 @@ name: Apply Infrastructure - DEV
 on:
   push:
    branches:
-    - master    
+    - 8-create-serverless-configuration-and-setup-github-actions
+    - master   
 
 jobs:
   apply-dev-infra:
