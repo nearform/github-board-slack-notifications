@@ -6,7 +6,6 @@ const schema = S.object()
   .prop('SLACK_SIGNING_SECRET', S.string().required())
   .prop('SLACK_CHANNEL', S.string().required())
   .prop('ORG_WEBHOOK_SECRET', S.string().required())
-  .prop('ORG_ACCESS_TOKEN', S.string().required())
   .prop('ORG_PRIVATE_KEY', S.string().required())
   .prop('ORG_APP_ID', S.string().required())
 
