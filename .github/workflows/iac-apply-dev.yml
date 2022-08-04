@@ -28,6 +28,12 @@ jobs:
         run: terraform fmt -recursive -check -diff
         continue-on-error: true
 
+      - name: Configure AWS credentials for DEV
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::740172916922:role/github-actions-terraform-role-dev
+          aws-region: us-east-1
+
       - name: Initialize project
         working-directory: ./infra/
         run: terraform init -backend-config=env/dev/backend.hcl  -var-file=env/dev/dev.tfvars -reconfigure
