@@ -27,7 +27,11 @@ const schema = {
     )
     .prop('changes', S.object())
     .prop('organization', S.object())
-    .prop('sender', S.object()),
+    .prop('sender', S.object())
+    .prop(
+      'installation',
+      S.object().required().prop('id', S.integer().required())
+    ),
 }
 
 /**
@@ -40,22 +44,21 @@ export default async function (fastify) {
     { schema, preHandler: verifyRequest },
     async request => {
       const activityType = getActivityTypeFromWebhook(request.body)
+      console.log(request.body)
 
+      const id = request.body.projects_v2_item.node_id
+      const installationId = request.body.installation.id
       switch (activityType) {
         case activityTypes.ISSUE_CREATED:
           fastify.log.info({
             activityType: activityTypes.ISSUE_CREATED,
-            graphqlResponse: await getProjectItemById(
-              request.body.projects_v2_item.node_id
-            ),
+            graphqlResponse: await getProjectItemById({ id, installationId }),
           })
           break
         case activityTypes.ISSUE_MOVED:
           fastify.log.info({
             activityType: activityTypes.ISSUE_MOVED,
-            graphqlResponse: await getProjectItemById(
-              request.body.projects_v2_item.node_id
-            ),
+            graphqlResponse: await getProjectItemById({ id, installationId }),
           })
           break
         default:

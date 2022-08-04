@@ -53,6 +53,9 @@ test('POST /webhook', async t => {
               html_url: 'www.github.com/john_doe',
             },
           },
+          installation: {
+            id: 123,
+          },
         },
       })
 
@@ -76,6 +79,9 @@ test('POST /webhook', async t => {
           login: 'john_doe',
           html_url: 'www.github.com/john_doe',
         },
+      },
+      installation: {
+        id: 123,
       },
     }
     const signature = createSignature(body, config.ORG_WEBHOOK_SECRET)
