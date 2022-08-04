@@ -16,15 +16,48 @@ export const getProjectItemById = async ({ installationId, id }) => {
   })
 
   return await graphql({
-    query: `query MyQuery($id: ID!) {
+    query: `query getProjectItem($id: ID!) {
       node(id: $id) {
         ... on ProjectV2Item {
+          creator {
+            url
+            login
+          }
           id
+          project {
+            title
+          }
           content {
-            __typename
             ... on Issue {
+              assignees(last: 3) {
+                nodes {
+                  url
+                  login
+                }
+              }
+              author {
+                url
+                login
+              }
               id
               title
+              body
+              url
+              repository {
+                url
+                name
+              }
+            }
+            ... on DraftIssue {
+              id
+              title
+              body
+            }
+          }
+          fieldValueByName(name: "Status") {
+            ... on ProjectV2ItemFieldSingleSelectValue {
+              id
+              name
             }
           }
         }

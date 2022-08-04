@@ -61,6 +61,12 @@ export default async function (fastify) {
             graphqlResponse: await getProjectItemById({ id, installationId }),
           })
           break
+        case activityTypes.ISSUE_ASSIGNEES:
+          fastify.log.info({
+            activityType: activityTypes.ISSUE_ASSIGNEES,
+            graphqlResponse: await getProjectItemById({ id, installationId }),
+          })
+          break
         default:
           fastify.log.info('Unhandled activity', request.body)
           break
@@ -73,6 +79,7 @@ export default async function (fastify) {
 const activityTypes = Object.freeze({
   ISSUE_MOVED: 'ISSUE_MOVED',
   ISSUE_CREATED: 'ISSUE_CREATED',
+  ISSUE_ASSIGNEES: 'ISSUE_ASSIGNEES',
 })
 
 function getActivityTypeFromWebhook(webhookPayload) {
@@ -94,6 +101,10 @@ function getActivityTypeFromWebhook(webhookPayload) {
     // This refers to the status field of an item changing e.g. TODO -> In Progress
     if (changes.field_value?.field_type === 'single_select') {
       return activityTypes.ISSUE_MOVED
+    }
+
+    if (changes.field_value?.field_type === 'assignees') {
+      return activityTypes.ISSUE_ASSIGNEES
     }
   }
 
