@@ -1,6 +1,7 @@
 'use strict'
 import S from 'fluent-json-schema'
 import { verifyRequest } from '../lib/verify-request.js'
+import * as webhook from '../lib/get-webhook-activity.js'
 import { getProjectItemById } from '../src/graphql.js'
 
 const schema = {
@@ -43,27 +44,27 @@ export default async function (fastify) {
     '/webhook',
     { schema, preHandler: verifyRequest },
     async request => {
-      const activityType = getActivityTypeFromWebhook(request.body)
+      const activityType = webhook.getActivity(request.body)
       console.log(request.body)
 
       const id = request.body.projects_v2_item.node_id
       const installationId = request.body.installation.id
       switch (activityType) {
-        case activityTypes.ISSUE_CREATED:
+        case webhook.ISSUE_CREATED:
           fastify.log.info({
-            activityType: activityTypes.ISSUE_CREATED,
+            activityType: webhook.ISSUE_CREATED,
             graphqlResponse: await getProjectItemById({ id, installationId }),
           })
           break
-        case activityTypes.ISSUE_MOVED:
+        case webhook.ISSUE_MOVED:
           fastify.log.info({
-            activityType: activityTypes.ISSUE_MOVED,
+            activityType: webhook.ISSUE_MOVED,
             graphqlResponse: await getProjectItemById({ id, installationId }),
           })
           break
-        case activityTypes.ISSUE_ASSIGNEES:
+        case webhook.ISSUE_ASSIGNEES:
           fastify.log.info({
-            activityType: activityTypes.ISSUE_ASSIGNEES,
+            activityType: webhook.ISSUE_ASSIGNEES,
             graphqlResponse: await getProjectItemById({ id, installationId }),
           })
           break
@@ -74,39 +75,4 @@ export default async function (fastify) {
       return { ok: true }
     }
   )
-}
-
-const activityTypes = Object.freeze({
-  ISSUE_MOVED: 'ISSUE_MOVED',
-  ISSUE_CREATED: 'ISSUE_CREATED',
-  ISSUE_ASSIGNEES: 'ISSUE_ASSIGNEES',
-})
-
-function getActivityTypeFromWebhook(webhookPayload) {
-  const {
-    action,
-    projects_v2_item: { content_type },
-    changes,
-  } = webhookPayload
-
-  if (content_type !== 'Issue') {
-    return null
-  }
-
-  if (action === 'created') {
-    return activityTypes.ISSUE_CREATED
-  }
-
-  if (action === 'edited') {
-    // This refers to the status field of an item changing e.g. TODO -> In Progress
-    if (changes.field_value?.field_type === 'single_select') {
-      return activityTypes.ISSUE_MOVED
-    }
-
-    if (changes.field_value?.field_type === 'assignees') {
-      return activityTypes.ISSUE_ASSIGNEES
-    }
-  }
-
-  return null
 }
