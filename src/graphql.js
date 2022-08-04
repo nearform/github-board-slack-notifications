@@ -1,21 +1,7 @@
 'use strict'
 
-import { graphql } from '@octokit/graphql'
-import { createAppAuth } from '@octokit/auth-app'
-import config from './config.js'
-
-const auth = createAppAuth({
-  appId: config.ORG_APP_ID,
-  privateKey: config.ORG_PRIVATE_KEY,
-})
-
-export const getProjectItemById = async ({ installationId, id }) => {
-  const installationAuth = await auth({
-    type: 'installation',
-    installationId,
-  })
-
-  return await graphql({
+export const getProjectItemById = async ({ graphqlClient, id }) => {
+  return await graphqlClient({
     query: `query getProjectItem($id: ID!) {
       node(id: $id) {
         ... on ProjectV2Item {
@@ -26,6 +12,7 @@ export const getProjectItemById = async ({ installationId, id }) => {
           id
           project {
             title
+            number
           }
           content {
             ... on Issue {
@@ -64,8 +51,5 @@ export const getProjectItemById = async ({ installationId, id }) => {
       }
     }`,
     id: id,
-    headers: {
-      authorization: `token ${installationAuth.token}`,
-    },
   })
 }

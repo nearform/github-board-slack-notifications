@@ -46,32 +46,27 @@ export default async function (fastify) {
     async request => {
       const activityType = webhook.getActivity(request.body)
 
-      const id = request.body.projects_v2_item.node_id
-      const installationId = request.body.installation.id
+      const {
+        projects_v2_item: { node_id: id },
+      } = request.body
+
       switch (activityType) {
         case webhook.ISSUE_CREATED:
-          fastify.log.info({
-            activityType: webhook.ISSUE_CREATED,
-            graphqlResponse: await getProjectItemById({ id, installationId }),
-          })
-          break
         case webhook.ISSUE_MOVED:
-          fastify.log.info({
-            activityType: webhook.ISSUE_MOVED,
-            graphqlResponse: await getProjectItemById({ id, installationId }),
-          })
-          break
         case webhook.ISSUE_ASSIGNEES:
-          fastify.log.info({
-            activityType: webhook.ISSUE_ASSIGNEES,
-            graphqlResponse: await getProjectItemById({ id, installationId }),
-          })
+          fastify.log.info(
+            await getProjectItemById({
+              graphqlClient: await fastify.authenticateGraphql(request),
+              id,
+            }),
+            activityType
+          )
           break
         default:
-          fastify.log.info('Unhandled activity', request.body)
+          fastify.log.info(request.body, 'Unhandled activity')
           break
       }
-      return { ok: true }
+      return { ok: true, activityType }
     }
   )
 }

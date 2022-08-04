@@ -5,8 +5,13 @@ import { test } from 'tap'
 import { build } from '../helper.js'
 import config from '../../src/config.js'
 import { createSignature } from '../../lib/verify-request.js'
+import sinon from 'sinon'
+import itemCreated from '../fixtures/webhook/itemCreated.js'
 
 test('POST /webhook', async t => {
+  t.afterEach(() => {
+    sinon.restore()
+  })
   t.test('returns 400 with invalid payload', async t => {
     const app = await build(t)
 
@@ -94,6 +99,25 @@ test('POST /webhook', async t => {
       },
     })
 
+    t.equal(res.statusCode, 200)
+  })
+  t.test('sends a graphql request when an item is created', async t => {
+    const stub = sinon.stub()
+    const app = await build(t, {
+      graphqlClient: async function authenticateGraphql() {
+        return stub
+      },
+    })
+    const signature = createSignature(itemCreated, config.ORG_WEBHOOK_SECRET)
+    const res = await app.inject({
+      url: '/webhook',
+      method: 'POST',
+      body: itemCreated,
+      headers: {
+        'X-Hub-Signature-256': signature,
+      },
+    })
+    t.equal(stub.callCount, 1)
     t.equal(res.statusCode, 200)
   })
 })
