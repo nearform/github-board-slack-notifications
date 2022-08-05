@@ -26,7 +26,7 @@ export const createGraphqlClient = async installationId => {
 export default fp(async function (fastify, options) {
   const { graphqlClient = createGraphqlClient } = options
 
-  fastify.decorate('authenticateGraphql', req =>
-    graphqlClient(req.body.installation.id)
-  )
+  fastify.decorateRequest('authenticateGraphql', function () {
+    return graphqlClient(this.body.installation.id)
+  })
 })

@@ -56,7 +56,7 @@ export default async function (fastify) {
         case webhook.ISSUE_ASSIGNEES:
           fastify.log.info(
             await getProjectItemById({
-              graphqlClient: await fastify.authenticateGraphql(request),
+              graphqlClient: await request.authenticateGraphql(),
               id,
             }),
             activityType
