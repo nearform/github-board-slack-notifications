@@ -1,4 +1,4 @@
-module ecr {
-  source  = "./modules/ecr"
-  project = var.project
+module lambda {
+  source   = "./modules/lambda"
+  project  = var.project
 }
