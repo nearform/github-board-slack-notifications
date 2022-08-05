@@ -7,21 +7,17 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 const AppPath = path.join(__dirname, '..', 'src', 'app.js')
 
 /*
-Fill in this config with all the configurations
+Pass config with all the configurations
 needed for testing the application
 */
 
-export function config() {
-  return {}
-}
-
-export async function build(t) {
+export async function build(t, config = {}) {
   const argv = [AppPath]
-  const app = await buildApplication(argv, config())
+  const app = await buildApplication(argv, config)
 
   // tear down our app after we are done
   t.teardown(app.close.bind(app))
 
   return app
 }
-export default { build, config }
+export default { build }

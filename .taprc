@@ -2,3 +2,5 @@ node-arg:
   - --no-warnings
   - --experimental-loader
   - "@istanbuljs/esm-loader-hook"
+nyc-arg:
+  - --exclude=plugins/authenticate-graphql.js

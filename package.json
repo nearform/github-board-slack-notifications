@@ -40,6 +40,7 @@
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
+    "sinon": "^14.0.0",
     "tap": "^16.3.0"
   },
   "lint-staged": {
@@ -50,6 +51,8 @@
     "@fastify/cors": "^8.1.0",
     "@fastify/env": "^4.0.0",
     "@fastify/sensible": "^5.1.0",
+    "@octokit/auth-app": "^4.0.4",
+    "@octokit/graphql": "^5.0.0",
     "@slack/bolt": "^3.12.1",
     "aws-cdk-lib": "^2.35.0",
     "constructs": "^10.1.66",
