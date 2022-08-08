@@ -4,6 +4,6 @@ terraform {
     bucket = "github-board-slack-notifications-tfstate"
     key    = "dev-terraform.state"
     region = "us-east-1"
-    profile = "bench-Admin"
+    # profile = "bench-Admin"
   }
 }
