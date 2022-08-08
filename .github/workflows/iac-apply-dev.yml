@@ -1,0 +1,50 @@
+name: Apply Infrastructure - DEV
+
+on:
+  workflow_dispatch:
+  push:
+   branches:
+    - 8-create-serverless-configuration-and-setup-github-actions
+    - master   
+
+jobs:
+  apply-dev-infra:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read 
+    steps:
+      - name: Applying IaC on DEV
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+     
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+      
+      - name: Terraform Format - DEV Environment
+        id: fmt
+        working-directory: ./infra/
+        run: terraform fmt -recursive -check -diff
+        continue-on-error: true
+
+      - name: Configure AWS credentials for DEV
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::740172916922:role/github-actions-terraform-role-dev
+          aws-region: us-east-1
+
+      - name: Initialize project
+        working-directory: ./infra/
+        run: terraform init -backend-config=env/dev/backend.hcl  -var-file=env/dev/dev.tfvars -reconfigure
+
+      - name: Terraform Plan - DEV
+        working-directory: ./infra/
+        run: terraform plan -var-file=env/dev/dev.tfvars -out=tfplan
+
+      - name: Apply Infra - DEV
+        working-directory: ./infra/
+        id: apply_infra
+        run: terraform apply -auto-approve tfplan
