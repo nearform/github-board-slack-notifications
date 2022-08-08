@@ -1,26 +1,22 @@
 'use strict'
 
-import { graphql } from '@octokit/graphql'
 import { createAppAuth } from '@octokit/auth-app'
+import { Octokit } from '@octokit/core'
+import { retry } from '@octokit/plugin-retry'
 import config from '../src/config.js'
 import fp from 'fastify-plugin'
 
-const auth = createAppAuth({
-  appId: config.ORG_APP_ID,
-  privateKey: config.ORG_PRIVATE_KEY,
-})
-
 export const createGraphqlClient = async installationId => {
-  const { token } = await auth({
-    type: 'installation',
-    installationId,
-  })
-
-  return graphql.defaults({
-    headers: {
-      authorization: `token: ${token}`,
+  const PluginOctokit = Octokit.plugin(retry)
+  const octokit = new PluginOctokit({
+    authStrategy: createAppAuth,
+    auth: {
+      appId: config.ORG_APP_ID,
+      privateKey: new Buffer.from(config.ORG_PRIVATE_KEY, 'base64').toString(),
+      installationId,
     },
   })
+  return octokit.graphql
 }
 
 export default fp(async function (fastify, options) {
