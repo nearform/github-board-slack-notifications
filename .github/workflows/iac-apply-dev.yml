@@ -1,6 +1,7 @@
 name: Apply Infrastructure - DEV
 
 on:
+  workflow_dispatch:
   push:
    branches:
     - 8-create-serverless-configuration-and-setup-github-actions
