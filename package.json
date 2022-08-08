@@ -49,7 +49,7 @@
   "dependencies": {
     "@fastify/autoload": "^5.2.0",
     "@fastify/cors": "^8.1.0",
-    "@fastify/env": "^4.0.0",
+    "@fastify/env": "^4.1.0",
     "@fastify/sensible": "^5.1.0",
     "@octokit/auth-app": "^4.0.4",
     "@octokit/core": "^4.0.4",
