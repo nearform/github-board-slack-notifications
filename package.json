@@ -47,7 +47,7 @@
     "*.{js,jsx}": "eslint --cache --fix"
   },
   "dependencies": {
-    "@fastify/autoload": "^5.1.0",
+    "@fastify/autoload": "^5.2.0",
     "@fastify/cors": "^8.1.0",
     "@fastify/env": "^4.0.0",
     "@fastify/sensible": "^5.1.0",
