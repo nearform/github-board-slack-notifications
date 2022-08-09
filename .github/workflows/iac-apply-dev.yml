@@ -1,29 +1,30 @@
 name: Apply Infrastructure - DEV
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
   push:
-   branches:
-    - 8-create-serverless-configuration-and-setup-github-actions
-    - master   
+    branches:
+      - master
 
 jobs:
   apply-dev-infra:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read 
+      contents: read
     steps:
       - name: Applying IaC on DEV
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
-     
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
-      
+
       - name: Terraform Format - DEV Environment
         id: fmt
         working-directory: ./infra/
