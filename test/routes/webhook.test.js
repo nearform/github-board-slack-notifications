@@ -89,7 +89,7 @@ test('POST /webhook', async t => {
         id: 123,
       },
     }
-    const signature = createSignature(body, config.ORG_WEBHOOK_SECRET)
+    const signature = createSignature(body, config.APP_WEBHOOK_SECRET)
     const res = await app.inject({
       url: '/webhook',
       method: 'POST',
@@ -108,7 +108,7 @@ test('POST /webhook', async t => {
         return stub
       },
     })
-    const signature = createSignature(itemCreated, config.ORG_WEBHOOK_SECRET)
+    const signature = createSignature(itemCreated, config.APP_WEBHOOK_SECRET)
     const res = await app.inject({
       url: '/webhook',
       method: 'POST',

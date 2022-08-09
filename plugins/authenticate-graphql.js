@@ -11,8 +11,8 @@ export const createGraphqlClient = async installationId => {
   const octokit = new PluginOctokit({
     authStrategy: createAppAuth,
     auth: {
-      appId: config.ORG_APP_ID,
-      privateKey: new Buffer.from(config.ORG_PRIVATE_KEY, 'base64').toString(),
+      appId: config.APP_ID,
+      privateKey: new Buffer.from(config.APP_PRIVATE_KEY, 'base64').toString(),
       installationId,
     },
   })

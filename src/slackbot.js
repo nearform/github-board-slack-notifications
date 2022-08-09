@@ -29,6 +29,38 @@ export async function sendIssueUpdated({
   })
 }
 
+export async function sendDraftIssueCreated({ creator, column, title }) {
+  // https://slack.dev/bolt-js/concepts#web-api
+  return await app.client.chat.postMessage({
+    channel: config.SLACK_CHANNEL,
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `:warning: A *draft*, ${title} has been created and added to the column, ${column}, by <https://github.com/${creator}|${creator}>`,
+        },
+      },
+    ],
+  })
+}
+
+export async function sendIssueCreated({ creator, column, title, issueLink }) {
+  // https://slack.dev/bolt-js/concepts#web-api
+  return await app.client.chat.postMessage({
+    channel: config.SLACK_CHANNEL,
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `:white_check_mark: <${issueLink}|${title}> has been created and added to the column, ${column}, by <https://github.com/${creator}|${creator}>`,
+        },
+      },
+    ],
+  })
+}
+
 /**
  * Example usage
  */

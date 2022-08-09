@@ -3,6 +3,7 @@ import S from 'fluent-json-schema'
 import { verifyRequest } from '../lib/verify-request.js'
 import * as webhook from '../lib/get-webhook-activity.js'
 import { getProjectItemById } from '../src/graphql.js'
+import * as slackbot from '../src/slackbot.js'
 
 const schema = {
   body: S.object()
@@ -47,25 +48,69 @@ export default async function (fastify) {
       const activityType = webhook.getActivity(request.body)
 
       const {
-        projects_v2_item: { node_id: id },
+        projects_v2_item: { node_id: id, content_node_id },
       } = request.body
 
+      console.log({ activityType })
+
+      let issue, creator, title, column, issueLink
+
       switch (activityType) {
+        case webhook.ISSUE_DELETED:
+          issue = await getProjectItemById({
+            graphqlClient: await request.authenticateGraphql(),
+            id: content_node_id,
+          })
+
+          title = issue.node.title
+          break
+        case webhook.DRAFT_CREATED:
+          issue = await getProjectItemById({
+            graphqlClient: await request.authenticateGraphql(),
+            id,
+          })
+
+          creator = request.body.projects_v2_item.creator.login
+
+          title = issue.node.content.title
+          column = issue.node.fieldValueByName.name
+
+          await slackbot.sendDraftIssueCreated({
+            creator,
+            title,
+            column,
+          })
+
+          break
         case webhook.ISSUE_CREATED:
+          issue = await getProjectItemById({
+            graphqlClient: await request.authenticateGraphql(),
+            id,
+          })
+
+          creator = request.body.projects_v2_item.creator.login
+
+          title = issue.node.content.title
+          column = issue.node.fieldValueByName.name
+          issueLink = issue.node.content.url
+
+          await slackbot.sendIssueCreated({
+            creator,
+            title,
+            column,
+            issueLink,
+          })
+
+          break
         case webhook.ISSUE_MOVED:
+          break
         case webhook.ISSUE_ASSIGNEES:
-          fastify.log.info(
-            await getProjectItemById({
-              graphqlClient: await request.authenticateGraphql(),
-              id,
-            }),
-            activityType
-          )
           break
         default:
-          fastify.log.info(request.body, 'Unhandled activity')
+          fastify.log.info('Unhandled activity')
           break
       }
+
       return { ok: true, activityType }
     }
   )

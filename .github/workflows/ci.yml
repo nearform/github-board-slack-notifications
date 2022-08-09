@@ -19,12 +19,12 @@ jobs:
       - run: npm run lint
       - name: Test
         env:
-            SLACK_TOKEN: ${{ secrets.DEV_SLACK_TOKEN }}
-            SLACK_SIGNING_SECRET: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
-            SLACK_CHANNEL: ${{ secrets.DEV_SLACK_CHANNEL }}
-            ORG_WEBHOOK_SECRET: ${{ secrets.ORG_WEBHOOK_SECRET }}
-            ORG_PRIVATE_KEY: ${{ secrets.ORG_PRIVATE_KEY }}
-            ORG_APP_ID: ${{ secrets.ORG_APP_ID }}
+          SLACK_TOKEN: ${{ secrets.DEV_SLACK_TOKEN }}
+          SLACK_SIGNING_SECRET: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
+          SLACK_CHANNEL: ${{ secrets.DEV_SLACK_CHANNEL }}
+          APP_WEBHOOK_SECRET: ${{ secrets.APP_WEBHOOK_SECRET }}
+          APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
+          APP_ID: ${{ secrets.APP_ID }}
         run: npm test
 
   automerge:

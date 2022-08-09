@@ -4,6 +4,9 @@ export const getProjectItemById = async ({ graphqlClient, id }) => {
   return await graphqlClient({
     query: `query getProjectItem($id: ID!) {
       node(id: $id) {
+        ... on Issue {
+          title
+        }
         ... on ProjectV2Item {
           creator {
             url
