@@ -26,7 +26,7 @@ test('get webhook activity', async t => {
     )
     t.equal(
       webhook.getActivity({
-        action: 'unkown',
+        action: 'unknown',
         projects_v2_item: {
           content_type: 'Issue',
         },

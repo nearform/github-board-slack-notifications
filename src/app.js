@@ -11,8 +11,9 @@ import config from './config.js'
 
 const __dirname = url.fileURLToPath(new URL('..', import.meta.url))
 
-function buildServer(envConfig = config) {
+function buildServer(envConfig) {
   const opts = {
+    ...config,
     ...envConfig,
     logger: {
       level: envConfig.LOG_LEVEL,
