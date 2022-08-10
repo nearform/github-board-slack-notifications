@@ -1,17 +1,17 @@
 data "archive_file" "zip" {
   type        = "zip"
-  source_dir  = "../src"
-  output_path = "../hello.zip"
+  source_dir  = "../dist"
+  output_path = "../board_notification.zip"
 }
 
-resource "aws_lambda_function" "hello" {
+resource "aws_lambda_function" "board_notification" {
   filename         = data.archive_file.zip.output_path
   source_code_hash = filebase64sha256(data.archive_file.zip.output_path)
 
   function_name = "${var.project}-test"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "hello.handler"
-  runtime       = "nodejs14.x"
+  handler       = "dist/lambda.handler"
+  runtime       = "nodejs16.x"
   timeout       = 10
 
   environment {
