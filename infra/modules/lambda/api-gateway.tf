@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "api_gateway" {
   name        = var.project
-  description = "created with terraform"
+  description = "terraform provisioned"
 
   endpoint_configuration {
     types = ["REGIONAL"]
@@ -10,13 +10,13 @@ resource "aws_api_gateway_rest_api" "api_gateway" {
 resource "aws_api_gateway_resource" "proxy" {
   rest_api_id = aws_api_gateway_rest_api.api_gateway.id
   parent_id   = aws_api_gateway_rest_api.api_gateway.root_resource_id
-  path_part   = "hello"
+  path_part   = "webhook"
 }
 
 resource "aws_api_gateway_method" "proxy" {
   rest_api_id   = aws_api_gateway_rest_api.api_gateway.id
   resource_id   = aws_api_gateway_resource.proxy.id
-  http_method   = "GET"
+  http_method   = "POST"
   authorization = "NONE"
 }
 
@@ -47,12 +47,4 @@ resource "aws_api_gateway_stage" "dev" {
   variables = {
     "stage" = "dev"
   }
-}
-
-output "api_gateway_id" {
-  value = aws_api_gateway_rest_api.api_gateway.id
-}
-
-output "hello_dev" {
-  value = "${aws_api_gateway_stage.dev.invoke_url}/hello"
 }
