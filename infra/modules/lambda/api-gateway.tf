@@ -1,6 +1,6 @@
 resource "aws_api_gateway_rest_api" "api_gateway" {
   name        = var.project
-  description = "terraform provisioned"
+  description = "github-board-slack-notifications - terraform provisioned"
 
   endpoint_configuration {
     types = ["REGIONAL"]
