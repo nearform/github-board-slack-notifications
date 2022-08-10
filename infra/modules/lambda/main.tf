@@ -10,7 +10,7 @@ resource "aws_lambda_function" "board_notification" {
 
   function_name = "${var.project}-test"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "dist/lambda.handler"
+  handler       = "lambda.handler"
   runtime       = "nodejs16.x"
   timeout       = 10
 
