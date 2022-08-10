@@ -13,6 +13,15 @@ export const getProjectItemById = async ({ graphqlClient, id }) => {
           project {
             title
             number
+            url
+            field(name: "SlackChannel") {
+              ... on ProjectV2SingleSelectField {
+                name
+                options {
+                  name
+                }
+              }
+            }
           }
           content {
             ... on Issue {
@@ -20,16 +29,23 @@ export const getProjectItemById = async ({ graphqlClient, id }) => {
                 nodes {
                   url
                   login
+                  ... on User {
+                    name
+                  }
                 }
               }
               author {
                 url
                 login
+                ... on User {
+                  name
+                }
               }
               id
               title
               body
               url
+              number
               repository {
                 url
                 name
@@ -50,6 +66,6 @@ export const getProjectItemById = async ({ graphqlClient, id }) => {
         }
       }
     }`,
-    id: id,
+    id,
   })
 }

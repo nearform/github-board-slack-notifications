@@ -1,8 +1,10 @@
 'use strict'
 import S from 'fluent-json-schema'
+import { GraphqlResponseError } from '@octokit/graphql'
 import { verifyRequest } from '../lib/verify-request.js'
 import * as webhook from '../lib/get-webhook-activity.js'
 import { getProjectItemById } from '../src/graphql.js'
+import * as slackbot from '../src/slackbot.js'
 
 const schema = {
   body: S.object()
@@ -36,7 +38,7 @@ const schema = {
 }
 
 /**
- * @type {import('fastify').FastifyPluginAsync}
+ * @type {import("fastify").FastifyPluginAsync}
  */
 
 export default async function (fastify) {
@@ -50,22 +52,77 @@ export default async function (fastify) {
         projects_v2_item: { node_id: id },
       } = request.body
 
-      switch (activityType) {
-        case webhook.ISSUE_CREATED:
-        case webhook.ISSUE_MOVED:
-        case webhook.ISSUE_ASSIGNEES:
-          fastify.log.info(
-            await getProjectItemById({
-              graphqlClient: await request.authenticateGraphql(),
-              id,
-            }),
-            activityType
-          )
-          break
-        default:
-          fastify.log.info(request.body, 'Unhandled activity')
-          break
+      if (!Object.values(webhook).includes(activityType)) {
+        fastify.log.info('Unhandled activity')
+        return
       }
+
+      const issue = await getProjectItemById({
+        graphqlClient: await request.authenticateGraphql(),
+        id,
+      })
+      const {
+        node: {
+          creator: { url: authorUrl, login: authorUsername },
+          content: { title, url: issueUrl, number: issueNumber },
+          project: {
+            url: projectUrl,
+            field: { options: slackChannels },
+          },
+          fieldValueByName: { name: column } = {},
+        },
+      } = issue
+      fastify.log.info(issue)
+      const channels = slackChannels.map(({ name }) => name)
+
+      try {
+        switch (activityType) {
+          case webhook.ISSUE_DELETED:
+            break
+          case webhook.DRAFT_CREATED:
+            await slackbot.sendDraftIssueCreated({
+              authorUrl,
+              authorUsername,
+              title,
+              column,
+              channels,
+            })
+
+            break
+          case webhook.ISSUE_CREATED:
+            await slackbot.sendIssueCreated({
+              authorUrl,
+              authorUsername,
+              title,
+              column,
+              issueUrl,
+              channels,
+            })
+            break
+          case webhook.ISSUE_MOVED:
+            await slackbot.sendIssueUpdated({
+              title,
+              column,
+              issueUrl,
+              issueNumber,
+              projectUrl,
+              channels,
+            })
+            break
+          case webhook.ISSUE_ASSIGNEES:
+            break
+          default:
+            fastify.log.info('Unhandled activity')
+            break
+        }
+      } catch (e) {
+        if (e instanceof GraphqlResponseError) {
+          fastify.log.info('GraphQL error:', e.message)
+        } else {
+          throw e
+        }
+      }
+
       return { ok: true, activityType }
     }
   )

@@ -9,24 +9,29 @@ const app = new App({
 })
 
 export async function sendIssueUpdated({
-  link,
+  issueUrl,
+  issueNumber,
   title,
-  previousStatus,
-  nextStatus,
+  column,
+  projectUrl,
+  channels,
 }) {
-  // https://slack.dev/bolt-js/concepts#web-api
-  return await app.client.chat.postMessage({
-    channel: config.SLACK_CHANNEL,
-    blocks: [
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `Issue: <${link}|${title}> was moved from ${previousStatus} to ${nextStatus}`,
-        },
-      },
-    ],
-  })
+  return await Promise.all(
+    channels.map(channel =>
+      app.client.chat.postMessage({
+        channel,
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: `<${issueUrl}|#${issueNumber} ${title}> has been moved to <${projectUrl}|${column}>`,
+            },
+          },
+        ],
+      })
+    )
+  )
 }
 
 /**
