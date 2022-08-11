@@ -1,3 +1,6 @@
+lines: 66
+branches: 50
+statements: 66
 node-arg:
   - --no-warnings
   - --experimental-loader
