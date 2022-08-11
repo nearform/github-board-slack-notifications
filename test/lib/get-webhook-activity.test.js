@@ -7,6 +7,7 @@ import itemCreated from '../fixtures/webhook/itemCreated.js'
 import itemMovedToInProgress from '../fixtures/webhook/itemMovedNoStatusToInProgress.js'
 import itemMovedToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
 import itemAssigneeAdded from '../fixtures/webhook/itemAssigneeAdded.js'
+import itemDeleted from '../fixtures/webhook/itemDeleted.js'
 
 test('get webhook activity', async t => {
   t.test('returns null with unmatched activity', async t => {
@@ -26,7 +27,7 @@ test('get webhook activity', async t => {
     )
     t.equal(
       webhook.getActivity({
-        action: 'unkown',
+        action: 'unknown',
         projects_v2_item: {
           content_type: 'Issue',
         },
@@ -66,5 +67,9 @@ test('get webhook activity', async t => {
 
   t.test('returns "ISSUE_ASSIGNEES" with a valid payload', async t => {
     t.equal(webhook.getActivity(itemAssigneeAdded), webhook.ISSUE_ASSIGNEES)
+  })
+
+  t.test('returns "ISSUE_DELETED" with a valid payload', async t => {
+    t.equal(webhook.getActivity(itemDeleted), webhook.ISSUE_DELETED)
   })
 })

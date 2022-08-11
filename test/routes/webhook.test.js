@@ -7,6 +7,8 @@ import config from '../../src/config.js'
 import { createSignature } from '../../lib/verify-request.js'
 import sinon from 'sinon'
 import itemCreated from '../fixtures/webhook/itemCreated.js'
+import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
+import itemDeleted from '../fixtures/webhook/itemDeleted.js'
 
 test('POST /webhook', async t => {
   t.afterEach(() => {
@@ -101,23 +103,92 @@ test('POST /webhook', async t => {
 
     t.equal(res.statusCode, 200)
   })
-  t.test('sends a graphql request when an item is created', async t => {
-    const stub = sinon.stub()
-    const app = await build(t, {
-      graphqlClient: async function authenticateGraphql() {
-        return stub
-      },
-    })
-    const signature = createSignature(itemCreated, config.ORG_WEBHOOK_SECRET)
-    const res = await app.inject({
-      url: '/webhook',
-      method: 'POST',
-      body: itemCreated,
-      headers: {
-        'X-Hub-Signature-256': signature,
-      },
-    })
-    t.equal(stub.callCount, 1)
-    t.equal(res.statusCode, 200)
-  })
+  t.test(
+    'sends graphql and slack bot requests with valid payloads:',
+    async t => {
+      const graphQlStub = sinon.stub()
+      const slackStub = sinon.stub()
+      const buildApp = async graphQl =>
+        await build(t, {
+          graphqlClient: async function authenticateGraphql() {
+            return graphQl()
+          },
+          slackApp: async function slackApp() {
+            return {
+              client: {
+                chat: {
+                  postMessage: params => {
+                    slackStub()
+                    return params
+                  },
+                },
+              },
+            }
+          },
+        })
+      t.test('item created', async t => {
+        const signature = createSignature(
+          itemCreated,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const app = await buildApp(() => {
+          graphQlStub()
+          return itemCreated
+        })
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemCreated,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(graphQlStub.callCount, 1)
+        t.equal(slackStub.callCount, 1)
+        t.equal(res.statusCode, 200)
+      })
+      t.test('item updated', async t => {
+        const signature = createSignature(
+          itemMovedNoStatusToTodo,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const app = await buildApp(() => {
+          graphQlStub()
+          return itemMovedNoStatusToTodo
+        })
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemMovedNoStatusToTodo,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(graphQlStub.callCount, 1)
+        t.equal(graphQlStub.callCount, 1)
+        t.equal(res.statusCode, 200)
+      })
+      t.test('item deleted', async t => {
+        const signature = createSignature(
+          itemDeleted,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const app = await buildApp(() => {
+          graphQlStub()
+          return itemDeleted
+        })
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemDeleted,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(graphQlStub.callCount, 1)
+        t.equal(graphQlStub.callCount, 1)
+        t.equal(res.statusCode, 200)
+      })
+    }
+  )
 })

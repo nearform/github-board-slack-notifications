@@ -1,21 +1,8 @@
-import pkg from '@slack/bolt'
-import config from './config.js'
-const { App } = pkg
-
-// Initializes your app with your bot token and signing secret
-const app = new App({
-  token: config.SLACK_TOKEN,
-  signingSecret: config.SLACK_SIGNING_SECRET,
-})
-
-export async function sendIssueUpdated({
-  issueUrl,
-  issueNumber,
-  title,
-  column,
-  projectUrl,
-  channels,
-}) {
+/* eslint-disable no-unused-vars */
+export async function sendIssueUpdated(
+  app,
+  { issueUrl, issueNumber, title, column, projectUrl, channels }
+) {
   return await Promise.all(
     channels.map(channel =>
       app.client.chat.postMessage({
@@ -33,6 +20,14 @@ export async function sendIssueUpdated({
     )
   )
 }
+export async function sendDraftIssueCreated(
+  slackApp,
+  { authorUrl, authorUsername, title, column, channels }
+) {}
+export async function sendIssueCreated(
+  slackApp,
+  { authorUrl, authorUsername, title, column, issueUrl, channels }
+) {}
 
 /**
  * Example usage

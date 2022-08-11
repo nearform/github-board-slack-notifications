@@ -72,7 +72,7 @@ export default async function (fastify) {
           fieldValueByName: { name: column } = {},
         },
       } = issue
-      fastify.log.info(issue)
+
       const channels = slackChannels.map(({ name }) => name)
 
       try {
@@ -80,7 +80,7 @@ export default async function (fastify) {
           case webhook.ISSUE_DELETED:
             break
           case webhook.DRAFT_CREATED:
-            await slackbot.sendDraftIssueCreated({
+            await slackbot.sendDraftIssueCreated(await request.slackApp(), {
               authorUrl,
               authorUsername,
               title,
@@ -90,7 +90,7 @@ export default async function (fastify) {
 
             break
           case webhook.ISSUE_CREATED:
-            await slackbot.sendIssueCreated({
+            await slackbot.sendIssueCreated(await request.slackApp(), {
               authorUrl,
               authorUsername,
               title,
@@ -100,7 +100,7 @@ export default async function (fastify) {
             })
             break
           case webhook.ISSUE_MOVED:
-            await slackbot.sendIssueUpdated({
+            await slackbot.sendIssueUpdated(await request.slackApp(), {
               title,
               column,
               issueUrl,
