@@ -2,20 +2,17 @@
   "name": "github-board-slack-notifications",
   "version": "1.0.0",
   "description": "The purpose of this project is to sent notifications to a Slack channel for any changes that are performed in a Github board (Projects beta). The Github board and Slack channel pairs are configurable.",
-  "main": "dist/index.js",
+  "main": "dist/lambda.js",
   "type": "module",
   "scripts": {
     "lint": "eslint .",
     "test": "tap",
     "prepare": "husky install",
-    "build": "esbuild src/app.js --bundle --minify --platform=node --target=node16 --outbase=src --outdir=dist",
-    "cdk": "cdk",
-    "deploy": "npm run build && cdk deploy",
-    "deploy:cd": "npm run build && cdk deploy --require-approval never",
-    "diff": "cdk diff",
+    "build": "esbuild lambda.js --bundle --minify --platform=node --target=node16 --outdir=dist",
+    "deploy": "npm run build",
+    "deploy:cd": "npm run deploy",
     "lint:fix": "eslint . --fix",
-    "synth": "npm run build && cdk synth",
-    "dev": "fastify start -w -l info -P src/app.js"
+    "dev": "nodemon server"
   },
   "repository": {
     "type": "git",
@@ -39,6 +36,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
+    "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "sinon": "^14.0.0",
     "tap": "^16.3.0"
@@ -48,11 +46,13 @@
   },
   "dependencies": {
     "@fastify/autoload": "^5.2.0",
+    "@fastify/aws-lambda": "^3.1.1",
     "@fastify/cors": "^8.1.0",
     "@fastify/env": "^4.1.0",
     "@fastify/sensible": "^5.1.0",
     "@octokit/auth-app": "^4.0.4",
     "@octokit/core": "^4.0.4",
+    "@octokit/graphql": "^5.0.0",
     "@octokit/plugin-retry": "^3.0.9",
     "@slack/bolt": "^3.12.1",
     "aws-cdk-lib": "^2.37.1",

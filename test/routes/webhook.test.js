@@ -7,10 +7,13 @@ import config from '../../src/config.js'
 import { createSignature } from '../../lib/verify-request.js'
 import sinon from 'sinon'
 import itemCreated from '../fixtures/webhook/itemCreated.js'
+import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
+import itemDeleted from '../fixtures/webhook/itemDeleted.js'
+import getProjectItemByIdResponse from '../fixtures/graphql/getProjectItemByIdResponse.js'
 
 test('POST /webhook', async t => {
   t.afterEach(() => {
-    sinon.restore()
+    sinon.reset()
   })
   t.test('returns 400 with invalid payload', async t => {
     const app = await build(t)
@@ -67,57 +70,75 @@ test('POST /webhook', async t => {
       t.equal(res.statusCode, 401)
     }
   )
-  t.test('returns 200 with valid payload and header', async t => {
-    const app = await build(t)
-    const body = {
-      action: 'created',
-      projects_v2_item: {
-        id: 15,
-        node_id: 'PVTI_lAAEAQ8',
-        project_node_id: 'PVT_kwAEAQ',
-        content_node_id: 'DI_lAAEAQo',
-        content_type: 'DraftIssue',
-        created_at: '2022-05-20T21:20:57Z',
-        updated_at: '2022-05-20T21:20:57Z',
-        archived_at: null,
-        creator: {
-          login: 'john_doe',
-          html_url: 'www.github.com/john_doe',
+  t.test(
+    'sends graphql and slack bot requests with valid payloads:',
+    async t => {
+      const slackStub = sinon.stub()
+      const app = await build(t, {
+        // the authentication function returns a function
+        graphqlClient: async () => () => {
+          return getProjectItemByIdResponse
         },
-      },
-      installation: {
-        id: 123,
-      },
+        slackApp: async function slackApp() {
+          return {
+            client: {
+              chat: {
+                postMessage: params => {
+                  slackStub()
+                  return params
+                },
+              },
+            },
+          }
+        },
+      })
+      t.test('item created', async t => {
+        const signature = createSignature(
+          itemCreated,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemCreated,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(res.statusCode, 200)
+      })
+      t.test('item updated', async t => {
+        const signature = createSignature(
+          itemMovedNoStatusToTodo,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemMovedNoStatusToTodo,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(slackStub.callCount, 1)
+        t.equal(res.statusCode, 200)
+      })
+      t.test('item deleted', async t => {
+        const signature = createSignature(
+          itemDeleted,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemDeleted,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(slackStub.callCount, 1)
+        t.equal(res.statusCode, 200)
+      })
     }
-    const signature = createSignature(body, config.ORG_WEBHOOK_SECRET)
-    const res = await app.inject({
-      url: '/webhook',
-      method: 'POST',
-      body,
-      headers: {
-        'X-Hub-Signature-256': signature,
-      },
-    })
-
-    t.equal(res.statusCode, 200)
-  })
-  t.test('sends a graphql request when an item is created', async t => {
-    const stub = sinon.stub()
-    const app = await build(t, {
-      graphqlClient: async function authenticateGraphql() {
-        return stub
-      },
-    })
-    const signature = createSignature(itemCreated, config.ORG_WEBHOOK_SECRET)
-    const res = await app.inject({
-      url: '/webhook',
-      method: 'POST',
-      body: itemCreated,
-      headers: {
-        'X-Hub-Signature-256': signature,
-      },
-    })
-    t.equal(stub.callCount, 1)
-    t.equal(res.statusCode, 200)
-  })
+  )
 })

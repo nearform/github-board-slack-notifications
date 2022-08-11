@@ -8,6 +8,8 @@ const schema = S.object()
   .prop('ORG_WEBHOOK_SECRET', S.string().required())
   .prop('ORG_PRIVATE_KEY', S.string().required())
   .prop('ORG_APP_ID', S.string().required())
+  .prop('LOG_LEVEL', S.string().default('info'))
+  .prop('PRETTY_PRINT', S.string().default(true))
 
 const config = envSchema({
   schema,

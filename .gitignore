@@ -17,3 +17,5 @@ coverage
 .nyc_output
 logs
 vscode
+
+.terraform
