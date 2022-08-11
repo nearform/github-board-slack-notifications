@@ -1,41 +1,49 @@
-resource "aws_iam_role" "iam_for_lambda" {
-  name = "${var.project}-role-lambda"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
+data "archive_file" "zip" {
+  type        = "zip"
+  source_dir  = "../dist"
+  output_path = "../board_notification.zip"
 }
 
-resource "aws_lambda_function" "test_lambda" {
-  # If the file is not in the current working directory you will need to include a 
-  # path.module in the filename.
-  filename      = "lambda_function_payload.zip"
-  function_name = "${var.project}-lambda"
-  role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "index.test"
+resource "aws_lambda_function" "board_notification" {
+  filename         = data.archive_file.zip.output_path
+  source_code_hash = filebase64sha256(data.archive_file.zip.output_path)
 
-  # The filebase64sha256() function is available in Terraform 0.11.12 and later
-  # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
-  # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
-  source_code_hash = filebase64sha256("lambda_function_payload.zip")
-
-  runtime = "nodejs14.x"
+  function_name = "${var.project}-test"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "lambda.handler"
+  runtime       = "nodejs16.x"
+  timeout       = 10
 
   environment {
     variables = {
-      foo = "bar"
+      SLACK_TOKEN          = var.slack_token
+      SLACK_SIGNING_SECRET = var.slack_signing_secret
+      SLACK_CHANNEL        = var.slack_channel
+      ORG_WEBHOOK_SECRET   = var.org_webhook_secret
+      ORG_PRIVATE_KEY      = var.org_private_key
+      ORG_APP_ID           = var.org_app_id
     }
   }
+}
+
+resource "aws_lambda_alias" "alias_dev" {
+  name             = "dev"
+  description      = "dev"
+  function_name    = aws_lambda_function.board_notification.arn
+  function_version = "$LATEST"
+}
+
+resource "aws_lambda_permission" "lambda_permission" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.board_notification.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  # The "/*/*" portion grants access from any method on any resource
+  # within the API Gateway REST API.
+  source_arn = "${aws_api_gateway_rest_api.api_gateway.execution_arn}/*/*/github-board-slack-notifications-test"
+}
+
+resource "aws_cloudwatch_log_group" "convert_log_group" {
+  name = "/aws/lambda/${aws_lambda_function.board_notification.function_name}"
 }

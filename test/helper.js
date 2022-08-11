@@ -1,20 +1,13 @@
 'use strict'
-import path from 'path'
-import * as url from 'url'
+import buildServer from '../src/app.js'
+import config from '../src/config.js'
 
-import { build as buildApplication } from 'fastify-cli/helper.js'
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
-const AppPath = path.join(__dirname, '..', 'src', 'app.js')
-
-/*
-Pass config with all the configurations
-needed for testing the application
-*/
-
-export async function build(t, config = {}) {
-  const argv = [AppPath]
-  const app = await buildApplication(argv, config)
-
+export async function build(t, additionalOptions) {
+  const app = buildServer({
+    ...config,
+    ...additionalOptions,
+    LOG_LEVEL: 'silent',
+  })
   // tear down our app after we are done
   t.teardown(app.close.bind(app))
 
