@@ -12,7 +12,7 @@
     "deploy": "npm run build",
     "deploy:cd": "npm run deploy",
     "lint:fix": "eslint . --fix",
-    "dev": "node server"
+    "dev": "nodemon server"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
+    "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "sinon": "^14.0.0",
     "tap": "^16.3.0"

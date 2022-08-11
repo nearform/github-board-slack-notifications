@@ -69,3 +69,43 @@ export const getProjectItemById = async ({ graphqlClient, id }) => {
     id,
   })
 }
+
+export const getIssueById = async ({ graphqlClient, id }) => {
+  return await graphqlClient({
+    query: `query getProjectItem($id: ID!) {
+      node(id: $id) {        
+        ... on DraftIssue {
+          title
+        }
+        ... on Issue {
+          number
+          title
+        }
+      }
+    }`,
+    id,
+  })
+}
+
+export const getProjectById = async ({ graphqlClient, id }) => {
+  return await graphqlClient({
+    query: `query getProjectItem($id: ID!) {
+      node(id: $id) {        
+        ... on ProjectV2 {
+          title
+          number
+          url
+          field(name: "SlackChannel") {
+            ... on ProjectV2SingleSelectField {
+              name
+              options {
+                name
+              }
+            }
+          }
+        }
+      }
+    }`,
+    id,
+  })
+}

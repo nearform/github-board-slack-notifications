@@ -6,10 +6,10 @@ export async function build(t, additionalOptions) {
   const app = buildServer({
     ...config,
     ...additionalOptions,
-    LOG_LEVEL: 'silent',
+    LOG_LEVEL: 'error',
   })
   // tear down our app after we are done
-  t.teardown(app.close.bind(app))
+  t.teardown(() => app.close())
 
   return app
 }
