@@ -1,3 +1,3 @@
-project    = "github-board-slack-notifications-prod"
+project    = "github-board-slack-notifications"
 aws_region = "us-east-1"
 env        = "prod"
