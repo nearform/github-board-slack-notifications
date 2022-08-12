@@ -20,12 +20,6 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the application
-        run: npm run build
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -36,7 +30,13 @@ jobs:
         id: fmt
         working-directory: ./infra/
         run: terraform fmt -recursive -check -diff
-        continue-on-error: true
+        continue-on-error: false
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the application
+        run: npm run build
 
       - name: Configure AWS credentials for DEV
         uses: aws-actions/configure-aws-credentials@v1
