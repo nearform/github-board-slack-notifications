@@ -1,9 +1,3 @@
-data "archive_file" "zip" {
-  type        = "zip"
-  source_dir  = "../dist"
-  output_path = "../board_notification.zip"
-}
-
 resource "aws_lambda_function" "board_notification" {
   filename         = data.archive_file.zip.output_path
   source_code_hash = filebase64sha256(data.archive_file.zip.output_path)
