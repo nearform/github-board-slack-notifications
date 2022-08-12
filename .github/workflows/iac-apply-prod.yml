@@ -1,4 +1,4 @@
-name: Apply Infrastructure - DEV
+name: Apply Infrastructure - PROD
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
       - master
 
 jobs:
-  apply-dev-infra:
+  apply-prod-infra:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
-      - name: Applying IaC on DEV
+      - name: Applying IaC on PROD
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
