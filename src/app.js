@@ -1,5 +1,6 @@
 'use strict'
 
+import 'pino-pretty'
 import Fastify from 'fastify'
 import Env from '@fastify/env'
 import Cors from '@fastify/cors'
