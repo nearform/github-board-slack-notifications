@@ -1,15 +1,14 @@
 'use strict'
 
 import Fastify from 'fastify'
-import path from 'path'
-import AutoLoad from '@fastify/autoload'
 import Env from '@fastify/env'
 import Cors from '@fastify/cors'
 import S from 'fluent-json-schema'
-import * as url from 'url'
 import config from './config.js'
-
-const __dirname = url.fileURLToPath(new URL('..', import.meta.url))
+import sensible from '../plugins/sensible.js'
+import initSlackApp from '../plugins/init-slack-app.js'
+import authenticateGraphql from '../plugins/authenticate-graphql.js'
+import webhook from '../routes/webhook.js'
 
 function buildServer(envConfig) {
   const opts = {
@@ -38,17 +37,14 @@ function buildServer(envConfig) {
     origin: false,
   })
 
-  // Loads all plugins defined in plugins folder
-  fastify.register(AutoLoad, {
-    dir: path.join(__dirname, 'plugins'),
-    options: Object.assign({}, opts),
-  })
+  // Loads plugins
+  fastify.register(sensible, opts)
+  fastify.register(initSlackApp, opts)
+  fastify.register(authenticateGraphql, opts)
 
-  // Loads all plugins defined in routes
-  fastify.register(AutoLoad, {
-    dir: path.join(__dirname, 'routes'),
-    options: Object.assign({}, opts),
-  })
+  // Loads routes
+  fastify.register(webhook, opts)
+
   return fastify
 }
 

@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "test": "tap",
     "prepare": "husky install",
-    "build": "esbuild lambda.js --bundle --minify --platform=node --target=node16 --outdir=dist",
+    "build": "esbuild lambda.js --bundle --minify --format=esm --platform=node --target=node16 --outdir=dist",
     "deploy": "npm run build",
     "deploy:cd": "npm run deploy",
     "lint:fix": "eslint . --fix",
@@ -45,7 +45,6 @@
     "*.{js,jsx}": "eslint --cache --fix"
   },
   "dependencies": {
-    "@fastify/autoload": "^5.2.0",
     "@fastify/aws-lambda": "^3.1.1",
     "@fastify/cors": "^8.1.0",
     "@fastify/env": "^4.1.0",
