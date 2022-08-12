@@ -28,12 +28,12 @@ resource "aws_lambda_function" "board_notification" {
   }
 }
 
-resource "aws_lambda_alias" "alias_dev" {
-  name             = "dev"
-  description      = "dev"
-  function_name    = aws_lambda_function.board_notification.arn
-  function_version = "$LATEST"
-}
+# resource "aws_lambda_alias" "alias_dev" {
+#   name             = "dev"
+#   description      = "dev"
+#   function_name    = aws_lambda_function.board_notification.arn
+#   function_version = "$LATEST"
+# }
 
 resource "aws_lambda_permission" "lambda_permission" {
   statement_id  = "AllowAPIGatewayInvoke"
