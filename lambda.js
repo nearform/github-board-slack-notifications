@@ -1,3 +1,4 @@
 import awsLambdaFastify from '@fastify/aws-lambda'
 import init from './src/app.js'
-export const handler = awsLambdaFastify(init())
+const app = init()
+export const handler = awsLambdaFastify(app)

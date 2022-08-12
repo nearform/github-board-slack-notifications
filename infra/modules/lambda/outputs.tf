@@ -1,7 +1,7 @@
 output "api_gateway_id" {
-  value = aws_api_gateway_rest_api.api_gateway.id
+  value = aws_api_gateway_rest_api.apiLambda.id
 }
 
 output "webhook_url" {
-  value = "${aws_api_gateway_stage.dev.invoke_url}/webhook"
+  value = "${aws_api_gateway_deployment.apideploy.invoke_url}/webhook"
 }
