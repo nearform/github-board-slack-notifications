@@ -16,8 +16,8 @@ function buildServer(envConfig) {
     ...config,
     ...envConfig,
     logger: {
-      level: envConfig.LOG_LEVEL,
-      ...(envConfig.PRETTY_PRINT && {
+      level: (envConfig || config).LOG_LEVEL,
+      ...((envConfig || config).PRETTY_PRINT && {
         transport: {
           target: 'pino-pretty',
         },

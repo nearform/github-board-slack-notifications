@@ -7,6 +7,8 @@ import itemCreated from '../fixtures/webhook/itemCreated.js'
 import itemMovedToInProgress from '../fixtures/webhook/itemMovedNoStatusToInProgress.js'
 import itemMovedToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
 import itemAssigneeAdded from '../fixtures/webhook/itemAssigneeAdded.js'
+import itemDeleted from '../fixtures/webhook/itemDeleted.js'
+import draftCreated from '../fixtures/webhook/draftCreated.js'
 
 test('get webhook activity', async t => {
   t.test('returns null with unmatched activity', async t => {
@@ -59,6 +61,10 @@ test('get webhook activity', async t => {
     t.equal(webhook.getActivity(itemCreated), webhook.ISSUE_CREATED)
   })
 
+  t.test('returns "DRAFT_CREATED" with a valid payload', async t => {
+    t.equal(webhook.getActivity(draftCreated), webhook.DRAFT_CREATED)
+  })
+
   t.test('returns "ISSUE_MOVED" with a valid payload', async t => {
     t.equal(webhook.getActivity(itemMovedToInProgress), webhook.ISSUE_MOVED)
     t.equal(webhook.getActivity(itemMovedToTodo), webhook.ISSUE_MOVED)
@@ -66,5 +72,9 @@ test('get webhook activity', async t => {
 
   t.test('returns "ISSUE_ASSIGNEES" with a valid payload', async t => {
     t.equal(webhook.getActivity(itemAssigneeAdded), webhook.ISSUE_ASSIGNEES)
+  })
+
+  t.test('returns "ISSUE_DELETED" with a valid payload', async t => {
+    t.equal(webhook.getActivity(itemDeleted), webhook.ISSUE_DELETED)
   })
 })
