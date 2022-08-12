@@ -3,5 +3,5 @@ output "api_gateway_id" {
 }
 
 output "webhook_url" {
-  value = "${aws_api_gateway_stage.aws_api_gateway_deployment.apideploy.invoke_url}/webhook"
+  value = "${aws_api_gateway_deployment.apideploy.invoke_url}/webhook"
 }
