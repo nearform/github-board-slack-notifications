@@ -22,6 +22,8 @@ resource "aws_lambda_function" "board_notification" {
       ORG_WEBHOOK_SECRET   = var.org_webhook_secret
       ORG_PRIVATE_KEY      = var.org_private_key
       ORG_APP_ID           = var.org_app_id
+      LOG_LEVEL            = error
+      PRETTY_PRINT         = false
     }
   }
 }
