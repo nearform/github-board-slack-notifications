@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "test": "tap",
     "prepare": "husky install",
-    "build": "esbuild lambda.js --bundle --minify --format=esm --platform=node --target=node16 --outdir=dist",
+    "build": "esbuild lambda.js --bundle --minify --format=cjs --platform=node --target=node16 --outdir=dist",
     "deploy": "npm run build",
     "deploy:cd": "npm run deploy",
     "lint:fix": "eslint . --fix",
