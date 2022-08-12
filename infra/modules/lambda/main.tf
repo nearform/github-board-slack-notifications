@@ -8,7 +8,7 @@ resource "aws_lambda_function" "board_notification" {
   filename         = data.archive_file.zip.output_path
   source_code_hash = filebase64sha256(data.archive_file.zip.output_path)
 
-  function_name = "${var.project}-test"
+  function_name = "${var.project}-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda.handler"
   runtime       = "nodejs16.x"
@@ -40,5 +40,6 @@ resource "aws_lambda_permission" "lambda_permission" {
 }
 
 resource "aws_cloudwatch_log_group" "convert_log_group" {
-  name = "/aws/lambda/${aws_lambda_function.board_notification.function_name}"
+  name              = "/aws/lambda/${aws_lambda_function.board_notification.function_name}"
+  retention_in_days = 3
 }

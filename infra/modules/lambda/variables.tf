@@ -1,4 +1,5 @@
 variable "project" {}
+
 variable "aws_region" {}
 
 variable "slack_token" {

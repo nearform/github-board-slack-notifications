@@ -1,9 +1,6 @@
 name: Apply Infrastructure - DEV
 
 on:
-  pull_request:
-    branches:
-      - master
   push:
     branches:
       - master
@@ -32,13 +29,13 @@ jobs:
           terraform_version: 1.2.7
           terraform_wrapper: false
 
-      - name: Terraform Format - DEV Environment
+      - name: Terraform Format - PROD Environment
         id: fmt
         working-directory: ./infra/
         run: terraform fmt -recursive -check -diff
         continue-on-error: true
 
-      - name: Configure AWS credentials for DEV
+      - name: Configure AWS credentials for PROD
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::740172916922:role/github-actions-terraform-role-dev
@@ -46,13 +43,13 @@ jobs:
 
       - name: Initialize project
         working-directory: ./infra/
-        run: terraform init -backend-config=env/dev/backend.hcl  -var-file=env/dev/dev.tfvars -reconfigure
+        run: terraform init -backend-config=env/prod/backend.hcl  -var-file=env/prod/prod.tfvars -reconfigure
 
-      - name: Terraform Plan - DEV
+      - name: Terraform Plan - PROD
         working-directory: ./infra/
-        run: terraform plan -var-file=env/dev/dev.tfvars -var="slack_token=${{ secrets.DEV_SLACK_TOKEN }}" -var="slack_signing_secret=${{ secrets.DEV_SLACK_SIGNING_SECRET }}" -var="slack_channel=${{ secrets.DEV_SLACK_CHANNEL }}" -var="org_webhook_secret=${{ secrets.ORG_WEBHOOK_SECRET }}" -var="org_private_key=${{ secrets.ORG_PRIVATE_KEY }}" -var="org_app_id=${{ secrets.ORG_APP_ID }}" -out=tfplan
+        run: terraform plan -var-file=env/prod/prod.tfvars -var="slack_token=${{ secrets.PROD_SLACK_TOKEN }}" -var="slack_signing_secret=${{ secrets.PROD_SLACK_SIGNING_SECRET }}" -var="slack_channel=${{ secrets.PROD_SLACK_CHANNEL }}" -var="org_webhook_secret=${{ secrets.ORG_WEBHOOK_SECRET }}" -var="org_private_key=${{ secrets.ORG_PRIVATE_KEY }}" -var="org_app_id=${{ secrets.ORG_APP_ID }}" -out=tfplan
 
-      - name: Apply Infra - DEV
+      - name: Apply Infra - PROD
         working-directory: ./infra/
         id: apply_infra
         run: terraform apply -auto-approve tfplan
