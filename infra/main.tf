@@ -1,6 +1,7 @@
 module "lambda" {
   source               = "./modules/lambda"
   project              = var.project
+  env                  = var.env
   aws_region           = var.aws_region
   slack_token          = var.slack_token
   slack_signing_secret = var.slack_signing_secret

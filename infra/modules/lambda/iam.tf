@@ -11,6 +11,6 @@ data "aws_iam_policy_document" "lambda_assume_role_policy" {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name               = "${var.project}-lambda-role"
+  name               = "${var.project}-${var.env}-lambda-role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role_policy.json
 }

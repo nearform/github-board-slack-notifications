@@ -1,5 +1,5 @@
 resource "aws_api_gateway_rest_api" "apiLambda" {
-  name        = var.project
+  name        = "${var.project}-${var.env}"
   description = "terraform provisioned"
 
   endpoint_configuration {
