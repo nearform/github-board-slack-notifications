@@ -1,3 +1,29 @@
+# Terraform Lambda module
+
+This Terraform module creates a lambda function along with an API Gateway REST endpoint.
+API Gateway REST endpoint is used to expose the `/webhook` endpoint of the app, so Github can send requests to it.
+
+This project is deployed using the Github Actions. Look at the `.github/workflows/iac-apply-dev.yaml` and `.github/workflows/iac-apply-prod.yaml` to see how the deployment is done. Github Action assumes the role `arn:aws:iam::740172916922:role/github-actions-terraform-role-dev`, which has to be manually configured before the provisioning of this module. The role has a policy assinged which grants it the rigts to modify lambda, api gateway and IAM resources mentioned in this module.
+
+Example of usage:
+
+```
+module "lambda" {
+  source               = "./modules/lambda"
+  project              = var.project
+  env                  = var.env
+  aws_region           = var.aws_region
+  slack_token          = var.slack_token
+  slack_signing_secret = var.slack_signing_secret
+  slack_channel        = var.slack_channel
+  org_webhook_secret   = var.org_webhook_secret
+  org_private_key      = var.org_private_key
+  org_app_id           = var.org_app_id
+}
+```
+
+All variables are described below.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
