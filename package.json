@@ -50,7 +50,7 @@
     "@fastify/env": "^4.1.0",
     "@fastify/sensible": "^5.1.0",
     "@octokit/auth-app": "^4.0.4",
-    "@octokit/core": "^4.0.4",
+    "@octokit/core": "^4.0.5",
     "@octokit/graphql": "^5.0.0",
     "@octokit/plugin-retry": "^3.0.9",
     "@slack/bolt": "^3.12.1",
