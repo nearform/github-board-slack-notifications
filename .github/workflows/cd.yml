@@ -1,15 +1,22 @@
 name: Continuous Delivery
 
+# on:
+#   release:
+#     types: [published]
+#   push:
+#     branches: [master]
 on:
-  release:
-    types: [published]
+  pull_request:
+    branches:
+      - master
   push:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
   deploy-dev-app:
     name: deploy the DEV app
-    if: github.event_name == 'push'
+    if: github.event_name == 'pull_request'
     uses: ./.github/workflows/deploy-app.yml
     with:
       env: dev
@@ -17,13 +24,13 @@ jobs:
       slack_token: ${{ secrets.DEV_SLACK_TOKEN }}
       slack_signing_secret: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
       slack_channel: ${{ secrets.DEV_SLACK_CHANNEL }}
-      org_webhook_secret: ${{ secrets.ORG_WEBHOOK_SECRET }}
-      org_private_key: ${{ secrets.ORG_PRIVATE_KEY }}
-      org_app_id: ${{ secrets.ORG_APP_ID }}
+      org_webhook_secret: ${{ secrets.DEV_ORG_WEBHOOK_SECRET }}
+      org_private_key: ${{ secrets.DEV_ORG_PRIVATE_KEY }}
+      org_app_id: ${{ secrets.DEV_ORG_APP_ID }}
 
   deploy-prod-app:
     name: deploy the PROD app
-    if: github.event_name == 'release'
+    if: github.event_name == 'pull_request'
     uses: ./.github/workflows/deploy-app.yml
     with:
       env: prod
@@ -31,6 +38,6 @@ jobs:
       slack_token: ${{ secrets.PROD_SLACK_TOKEN }}
       slack_signing_secret: ${{ secrets.PROD_SLACK_SIGNING_SECRET }}
       slack_channel: ${{ secrets.PROD_SLACK_CHANNEL }}
-      org_webhook_secret: ${{ secrets.ORG_WEBHOOK_SECRET }}
-      org_private_key: ${{ secrets.ORG_PRIVATE_KEY }}
-      org_app_id: ${{ secrets.ORG_APP_ID }}
+      org_webhook_secret: ${{ secrets.PROD_ORG_WEBHOOK_SECRET }}
+      org_private_key: ${{ secrets.PROD_ORG_PRIVATE_KEY }}
+      org_app_id: ${{ secrets.PROD_ORG_APP_ID }}
