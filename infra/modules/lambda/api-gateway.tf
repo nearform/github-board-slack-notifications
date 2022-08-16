@@ -47,7 +47,7 @@ resource "aws_api_gateway_integration" "lambda_root" {
   uri                     = aws_lambda_function.board_notification.invoke_arn
 }
 
-resource "aws_api_gateway_deployment" "apideploy" {
+resource "aws_api_gateway_deployment" "api_lambda" {
   depends_on = [
     aws_api_gateway_integration.lambda,
     aws_api_gateway_integration.lambda_root,
