@@ -1,22 +1,15 @@
 name: Continuous Delivery
 
-# on:
-#   release:
-#     types: [published]
-#   push:
-#     branches: [master]
 on:
-  pull_request:
-    branches:
-      - master
+  release:
+    types: [published]
   push:
-    branches:
-      - master
+    branches: [master]
 
 jobs:
   deploy-dev-app:
     name: deploy the DEV app
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push'
     uses: ./.github/workflows/deploy-app.yml
     with:
       env: dev
