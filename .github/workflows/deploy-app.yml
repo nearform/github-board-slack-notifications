@@ -8,19 +8,17 @@ on:
         type: string
 
     secrets:
-      app_id_github:
+      slack_token:
         required: true
-      pr_author:
+      slack_signing_secret:
         required: true
-      project_number:
+      slack_channel:
         required: true
-      column_name:
+      org_webhook_secret:
         required: true
-      project_id:
+      org_private_key:
         required: true
-      gcp_provider_name:
-        required: true
-      gcp_sa:
+      org_app_id:
         required: true
 
 jobs:
