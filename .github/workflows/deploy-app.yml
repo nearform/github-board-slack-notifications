@@ -24,43 +24,6 @@ on:
         required: true
 
 jobs:
-  deploy:
-    name: Setup Gcloud Account
-    permissions:
-      id-token: write
-      contents: read
-    runs-on: ubuntu-latest
-    env:
-      gcp_service_region: us-central1
-
-    steps:
-      - name: GCP Authentication
-        id: auth
-        uses: "google-github-actions/auth@v0"
-        with:
-          token_format: "access_token"
-          workload_identity_provider: ${{ secrets.gcp_provider_name }}
-          service_account: ${{ secrets.gcp_sa }}
-
-      - name: Deploy Docker image
-        uses: "google-github-actions/deploy-cloudrun@v0"
-        with:
-          service: "unbreakci-${{ inputs.env }}"
-          region: ${{ env.gcp_service_region }}
-          project_id: ${{ env.project_id }}
-          flags: --allow-unauthenticated
-          suffix: ${{ github.sha }}
-          source: .
-          env_vars: |
-            APP_ID_GITHUB=${{ secrets.app_id_github }}
-            PR_AUTHOR=${{ secrets.pr_author }}
-            PROJECT_NUMBER=${{ secrets.project_number }}
-            COLUMN_NAME=${{ secrets.column_name }}
-            LOG_LEVEL=info
-          secrets: |
-            WEBHOOK_SECRET=unbreak_${{ inputs.env }}_webhook_secret:latest
-            APP_KEY=unbreak_${{ inputs.env }}_app_key:latest
-
   apply-dev-infra:
     runs-on: ubuntu-latest
     permissions:
