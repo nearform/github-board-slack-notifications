@@ -1,6 +1,9 @@
 name: Apply Infrastructure - PROD
 
 on:
+  pull_request:
+    branches:
+      - master
   push:
     branches:
       - master
