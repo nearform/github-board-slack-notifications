@@ -1,0 +1,110 @@
+name: deploy-app
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+
+    secrets:
+      app_id_github:
+        required: true
+      pr_author:
+        required: true
+      project_number:
+        required: true
+      column_name:
+        required: true
+      project_id:
+        required: true
+      gcp_provider_name:
+        required: true
+      gcp_sa:
+        required: true
+
+jobs:
+  deploy:
+    name: Setup Gcloud Account
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    env:
+      gcp_service_region: us-central1
+
+    steps:
+      - name: GCP Authentication
+        id: auth
+        uses: "google-github-actions/auth@v0"
+        with:
+          token_format: "access_token"
+          workload_identity_provider: ${{ secrets.gcp_provider_name }}
+          service_account: ${{ secrets.gcp_sa }}
+
+      - name: Deploy Docker image
+        uses: "google-github-actions/deploy-cloudrun@v0"
+        with:
+          service: "unbreakci-${{ inputs.env }}"
+          region: ${{ env.gcp_service_region }}
+          project_id: ${{ env.project_id }}
+          flags: --allow-unauthenticated
+          suffix: ${{ github.sha }}
+          source: .
+          env_vars: |
+            APP_ID_GITHUB=${{ secrets.app_id_github }}
+            PR_AUTHOR=${{ secrets.pr_author }}
+            PROJECT_NUMBER=${{ secrets.project_number }}
+            COLUMN_NAME=${{ secrets.column_name }}
+            LOG_LEVEL=info
+          secrets: |
+            WEBHOOK_SECRET=unbreak_${{ inputs.env }}_webhook_secret:latest
+            APP_KEY=unbreak_${{ inputs.env }}_app_key:latest
+
+  apply-dev-infra:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Applying IaC on DEV
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.7
+          terraform_wrapper: false
+
+      - name: Terraform Format Check
+        id: fmt
+        working-directory: ./infra/
+        run: terraform fmt -recursive -check -diff
+        continue-on-error: false
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the application
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::740172916922:role/github-actions-terraform-role-dev
+          aws-region: us-east-1
+
+      - name: Initialize project
+        working-directory: ./infra/
+        run: terraform init -backend-config=env/dev/backend.hcl  -var-file=env/${{ inputs.env }}/${{ inputs.env }}.tfvars -reconfigure
+
+      - name: Terraform Plan
+        working-directory: ./infra/
+        run: terraform plan -var-file=env/${{ inputs.env }}/${{ inputs.env }}.tfvars -var="slack_token=${{ secrets.slack_token }}" -var="slack_signing_secret=${{ secrets.slack_signing_secret }}" -var="slack_channel=${{ secrets.slack_channel }}" -var="org_webhook_secret=${{ secrets.org_webhook_secret }}" -var="org_private_key=${{ secrets.org_private_key }}" -var="org_app_id=${{ secrets.org_app_id }}" -out=tfplan
+
+      - name: Apply Infra
+        working-directory: ./infra/
+        id: apply_infra
+        run: terraform apply -auto-approve tfplan
