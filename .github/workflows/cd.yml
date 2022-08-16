@@ -1,25 +1,36 @@
-name: cd
+name: Continuous Delivery
+
 on:
+  release:
+    types: [published]
   push:
-    branches: [main]
-env:
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-permissions:
-      id-token: write
-      contents: read
+    branches: [master]
+
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git clone the repository
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: npm install  
-      - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
-      - name: Deploy the application
-        run: npm run deploy:cd
+  deploy-dev-app:
+    name: deploy the DEV app
+    if: github.event_name == 'push'
+    uses: ./.github/workflows/deploy-app.yml
+    with:
+      env: dev
+    secrets:
+      slack_token: ${{ secrets.DEV_SLACK_TOKEN }}
+      slack_signing_secret: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
+      slack_channel: ${{ secrets.DEV_SLACK_CHANNEL }}
+      org_webhook_secret: ${{ secrets.DEV_ORG_WEBHOOK_SECRET }}
+      org_private_key: ${{ secrets.DEV_ORG_PRIVATE_KEY }}
+      org_app_id: ${{ secrets.DEV_ORG_APP_ID }}
+
+  deploy-prod-app:
+    name: deploy the PROD app
+    if: github.event_name == 'release'
+    uses: ./.github/workflows/deploy-app.yml
+    with:
+      env: prod
+    secrets:
+      slack_token: ${{ secrets.PROD_SLACK_TOKEN }}
+      slack_signing_secret: ${{ secrets.PROD_SLACK_SIGNING_SECRET }}
+      slack_channel: ${{ secrets.PROD_SLACK_CHANNEL }}
+      org_webhook_secret: ${{ secrets.PROD_ORG_WEBHOOK_SECRET }}
+      org_private_key: ${{ secrets.PROD_ORG_PRIVATE_KEY }}
+      org_app_id: ${{ secrets.PROD_ORG_APP_ID }}

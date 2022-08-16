@@ -1,0 +1,71 @@
+name: deploy-app
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+
+    secrets:
+      slack_token:
+        required: true
+      slack_signing_secret:
+        required: true
+      slack_channel:
+        required: true
+      org_webhook_secret:
+        required: true
+      org_private_key:
+        required: true
+      org_app_id:
+        required: true
+
+jobs:
+  apply-infra:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Applying IaC
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.7
+          terraform_wrapper: false
+
+      - name: Terraform Format Check
+        id: fmt
+        working-directory: ./infra/
+        run: terraform fmt -recursive -check -diff
+        continue-on-error: false
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the application
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::740172916922:role/github-actions-terraform-role-dev
+          aws-region: us-east-1
+
+      - name: Initialize project
+        working-directory: ./infra/
+        run: terraform init -backend-config=env/${{ inputs.env }}/backend.hcl  -var-file=env/${{ inputs.env }}/${{ inputs.env }}.tfvars -reconfigure
+
+      - name: Terraform Plan
+        working-directory: ./infra/
+        run: terraform plan -var-file=env/${{ inputs.env }}/${{ inputs.env }}.tfvars -var="slack_token=${{ secrets.slack_token }}" -var="slack_signing_secret=${{ secrets.slack_signing_secret }}" -var="slack_channel=${{ secrets.slack_channel }}" -var="org_webhook_secret=${{ secrets.org_webhook_secret }}" -var="org_private_key=${{ secrets.org_private_key }}" -var="org_app_id=${{ secrets.org_app_id }}" -out=tfplan
+
+      - name: Apply Infra
+        working-directory: ./infra/
+        id: apply_infra
+        run: terraform apply -auto-approve tfplan
