@@ -57,9 +57,15 @@ resource "aws_api_gateway_deployment" "apideploy" {
   stage_name  = var.env
 }
 
-resource "aws_api_gateway_method_settings" "gateway_stage" {
+resource "aws_api_gateway_stage" "board_stage" {
+  deployment_id = aws_api_gateway_deployment.apideploy.id
+  rest_api_id   = aws_api_gateway_rest_api.apiLambda.id
+  stage_name    = var.env
+}
+
+resource "aws_api_gateway_method_settings" "board_stage" {
   rest_api_id = aws_api_gateway_rest_api.apiLambda.id
-  stage_name  = var.env
+  stage_name  = aws_api_gateway_stage.board_stage.stage_name
   method_path = "webhook/POST"
 
   settings {
