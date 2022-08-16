@@ -22,13 +22,13 @@ on:
         required: true
 
 jobs:
-  apply-dev-infra:
+  apply-infra:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     steps:
-      - name: Applying IaC on DEV
+      - name: Applying IaC
         uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
@@ -59,7 +59,7 @@ jobs:
 
       - name: Initialize project
         working-directory: ./infra/
-        run: terraform init -backend-config=env/dev/backend.hcl  -var-file=env/${{ inputs.env }}/${{ inputs.env }}.tfvars -reconfigure
+        run: terraform init -backend-config=env/${{ inputs.env }}/backend.hcl  -var-file=env/${{ inputs.env }}/${{ inputs.env }}.tfvars -reconfigure
 
       - name: Terraform Plan
         working-directory: ./infra/
