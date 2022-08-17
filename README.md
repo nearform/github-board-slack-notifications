@@ -3,7 +3,16 @@
 
 # Github board slack notifications
 The purpose of this project is to sent notifications to a Slack channel for any changes that are performed in a GitHub board (Projects v2 / beta).
-This application uses AWS Lambda as backend which is provisioned with Terraform. 
+This application uses AWS Lambda as backend which is provisioned with Terraform.
+
+# Features
+Currently notifications are being sent for the following events:
+- A Draft Issue is created on a board column that has a valid status. `No Status` column is not being notified.
+- An existing Issue is added to a board column that has a valid status.
+- A Draft Issue is converted to an Issue.
+- An Issue or Draft Issue is moved to a different column that has a valid status.
+- An Issue is removed from the board.
+
 # Setup
 In order for this integration to work, a GitHub App must be created and installed in the organisation that contains the targeted projects and a Slack application is required to post on the specified channels. 
 The steps are the following:

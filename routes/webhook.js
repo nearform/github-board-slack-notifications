@@ -92,7 +92,6 @@ export default async function (fastify) {
               title,
               url: issueUrl,
               number: issueNumber,
-              author,
               author: { url: authorUrl, name: authorName } = {},
             } = {},
             project: {
@@ -103,7 +102,6 @@ export default async function (fastify) {
             fieldValueByName: { name: column = null } = {},
           },
         } = issue
-        fastify.log.info(author)
         const channels = slackChannels.map(({ name }) => name)
 
         switch (activityType) {
@@ -169,7 +167,7 @@ export default async function (fastify) {
         }
       } catch (e) {
         if (e instanceof GraphqlResponseError) {
-          fastify.log.info('GraphQL error:', e.message)
+          fastify.log.info(`GraphQL error: ${e.message}`)
         } else {
           throw e
         }
