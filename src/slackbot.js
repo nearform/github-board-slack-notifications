@@ -71,3 +71,30 @@ export async function sendIssueDeleted(
   const mdText = `💡 ${itemText} has been deleted from <${projectUrl}|${projectName}> ❌`
   return await sendMessage(app, text, mdText, channels)
 }
+
+export async function sendPullRequestCreated(
+  app,
+  {
+    authorUrl,
+    authorName,
+    title,
+    prNumber,
+    prUrl,
+    projectUrl,
+    projectName,
+    channels,
+  }
+) {
+  const text = `💡 ${authorName} has a created a Pull Request titled _#${prNumber} ${title}_ in ${projectName} ➕️`
+  const mdText = `💡 <${authorUrl}|${authorName}> has a created a Pull Request titled _<${prUrl}|#${prNumber} ${title}>_ in <${projectUrl}|${projectName}> ➕️`
+  return sendMessage(app, text, mdText, channels)
+}
+
+export async function sendPullRequestDeleted(
+  app,
+  { title, prNumber, projectUrl, projectName, channels }
+) {
+  const text = `💡 Pull Request _#${prNumber} ${title}_ has been deleted from ${projectName} ❌`
+  const mdText = `💡 Pull Request _#${prNumber} ${title}_ has been deleted from <${projectUrl}|${projectName}> ❌`
+  return sendMessage(app, text, mdText, channels)
+}

@@ -81,6 +81,10 @@ export const getIssueById = async ({ graphqlClient, id }) => {
           number
           title
         }
+      ... on PullRequest {
+          number
+          title
+        }
       }
     }`,
     id,

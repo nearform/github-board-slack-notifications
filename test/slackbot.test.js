@@ -8,6 +8,9 @@ test('test slackbot', async t => {
   // test data
   const issueUrl = 'https://github.com/test-org/test-repo/issues/1',
     issueNumber = 1,
+    prNumber = 1,
+    prTitle = 'Test pull request',
+    prUrl = 'https://github.com/test-org/test-repo/pull/1',
     title = 'Test issue',
     column = 'Done',
     projectUrl = 'https://github.com/orgs/test-org/projects/1/views/1',
@@ -139,6 +142,66 @@ test('test slackbot', async t => {
               type: 'mrkdwn',
               text:
                 '💡 Issue _#1 Test issue_ has been deleted from ' +
+                '<https://github.com/orgs/test-org/projects/1/views/1|Test Board> ❌',
+            },
+          },
+        ],
+      },
+    ])
+  })
+
+  t.test('sendPullRequestCreated', async t => {
+    const response = await slackbot.sendPullRequestCreated(slackApp, {
+      authorUrl,
+      authorName,
+      title: prTitle,
+      prNumber,
+      prUrl,
+      projectUrl,
+      projectName,
+      channels,
+    })
+    t.equal(stub.callCount, 1)
+    t.same(response, [
+      {
+        text: '💡 testuser has a created a Pull Request titled _#1 Test pull request_ in Test Board ➕️',
+        channel: channels[0],
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text:
+                '💡 <https://github.com/testuser|testuser> has a created a Pull Request titled ' +
+                '_<https://github.com/test-org/test-repo/pull/1|#1 Test pull request>_ in ' +
+                '<https://github.com/orgs/test-org/projects/1/views/1|Test Board> ➕️',
+            },
+          },
+        ],
+      },
+    ])
+  })
+
+  t.test('sendPullRequestDeleted', async t => {
+    const response = await slackbot.sendPullRequestDeleted(slackApp, {
+      title: prTitle,
+      prNumber,
+      projectUrl,
+      projectName,
+      channels,
+    })
+    t.equal(stub.callCount, 1)
+    t.same(response, [
+      {
+        text: '💡 Pull Request _#1 Test pull request_ has been deleted from Test Board ❌',
+        channel: channels[0],
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text:
+                '💡 Pull Request _#1 Test pull request_ has been deleted from ' +
                 '<https://github.com/orgs/test-org/projects/1/views/1|Test Board> ❌',
             },
           },

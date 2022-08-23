@@ -1,10 +1,10 @@
 export default {
-  action: 'edited',
+  action: 'deleted',
   projects_v2_item: {
-    id: 8015255,
-    node_id: 'PVTI_lADOBpWafM4AEgSvzgB6TZc',
+    id: 8156154,
+    node_id: 'PVTI_lADOBpWafM4AEgSvzgB8c_o',
     project_node_id: 'PVT_kwDOBpWafM4AEgSv',
-    content_node_id: 'I_kwDOHwYncM5PBkqx',
+    content_node_id: 'I_kwDOHwYncM5PMB7X',
     content_type: 'PullRequest',
     creator: {
       login: 'some-github-user',
@@ -32,15 +32,9 @@ export default {
       type: 'User',
       site_admin: false,
     },
-    created_at: '2022-08-02T12:52:37Z',
-    updated_at: '2022-08-02T13:16:53Z',
+    created_at: '2022-08-04T12:54:31Z',
+    updated_at: '2022-08-04T12:54:31Z',
     archived_at: null,
-  },
-  changes: {
-    field_value: {
-      field_node_id: 'PVTF_lADOBpWafM4AEgSvzgCmE-w',
-      field_type: 'linked_pull_requests',
-    },
   },
   organization: {
     login: 'dev-test-org-3000',
@@ -84,6 +78,7 @@ export default {
     site_admin: false,
   },
   installation: {
-    id: 123456,
+    id: 27961269,
+    node_id: 'MDIzOkludGVncmF0aW9uSW5zdGFsbGF0aW9uMjc5NjEyNjk=',
   },
 }

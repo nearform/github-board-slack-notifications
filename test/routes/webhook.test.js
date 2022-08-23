@@ -10,6 +10,8 @@ import itemCreated from '../fixtures/webhook/itemCreated.js'
 import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
 import itemDeleted from '../fixtures/webhook/itemDeleted.js'
 import getProjectItemByIdResponse from '../fixtures/graphql/getProjectItemByIdResponse.js'
+import pullRequestCreated from '../fixtures/webhook/pullRequestCreated.js'
+import pullRequestDeleted from '../fixtures/webhook/pullRequestDeleted.js'
 
 test('POST /webhook', async t => {
   t.afterEach(() => {
@@ -132,6 +134,39 @@ test('POST /webhook', async t => {
           url: '/webhook',
           method: 'POST',
           body: itemDeleted,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(slackStub.callCount, 1)
+        t.equal(res.statusCode, 200)
+      })
+
+      t.test('pr created', async t => {
+        const signature = createSignature(
+          pullRequestCreated,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: pullRequestCreated,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(res.statusCode, 200)
+      })
+
+      t.test('pr deleted', async t => {
+        const signature = createSignature(
+          pullRequestDeleted,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: pullRequestDeleted,
           headers: {
             'X-Hub-Signature-256': signature,
           },

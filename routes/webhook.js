@@ -90,8 +90,8 @@ export default async function (fastify) {
             creator: { url: itemAuthorUrl, login: authorUsername } = {},
             content: {
               title,
-              url: issueUrl,
-              number: issueNumber,
+              url: itemUrl,
+              number: itemNumber,
               author: { url: authorUrl, name: authorName } = {},
             } = {},
             project: {
@@ -110,7 +110,7 @@ export default async function (fastify) {
             // thus we have to fetch by content_node_id to get the title and number
             // eslint-disable-next-line prettier/prettier
             ({
-              node: { title, number: issueNumber },
+              node: { title, number: itemNumber },
             } = await getIssueById({
               graphqlClient: await request.authenticateGraphql(),
               id: content_node_id,
@@ -118,7 +118,7 @@ export default async function (fastify) {
             await slackbot.sendIssueDeleted(await request.slackApp(), {
               title,
               channels,
-              issueNumber,
+              issueNumber: itemNumber,
               projectName,
               projectUrl,
               isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
@@ -130,7 +130,7 @@ export default async function (fastify) {
               authorName: authorName || authorUsername,
               title,
               channels,
-              issueNumber,
+              issueNumber: itemNumber,
               projectName,
               projectUrl,
             })
@@ -141,9 +141,9 @@ export default async function (fastify) {
               authorUrl: authorUrl || itemAuthorUrl,
               authorName: authorName || authorUsername,
               title,
-              issueUrl,
+              issueUrl: itemUrl,
               channels,
-              issueNumber,
+              issueNumber: itemNumber,
               projectName,
               projectUrl,
             })
@@ -152,14 +152,42 @@ export default async function (fastify) {
             await slackbot.sendIssueUpdated(await request.slackApp(), {
               title,
               column,
-              issueUrl,
-              issueNumber,
+              issueUrl: itemUrl,
+              issueNumber: itemNumber,
               projectUrl,
               channels,
               isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
             })
             break
           case webhook.ISSUE_ASSIGNEES:
+            break
+          case webhook.PR_CREATED:
+            await slackbot.sendPullRequestCreated(await request.slackApp(), {
+              authorUrl: authorUrl || itemAuthorUrl,
+              authorName: authorName || authorUsername,
+              title,
+              prUrl: itemUrl,
+              channels,
+              prNumber: itemNumber,
+              projectName,
+              projectUrl,
+            })
+            break
+          case webhook.PR_DELETED:
+            // eslint-disable-next-line prettier/prettier
+            ({
+              node: { title, number: itemNumber },
+            } = await getIssueById({
+              graphqlClient: await request.authenticateGraphql(),
+              id: content_node_id,
+            }))
+            await slackbot.sendPullRequestDeleted(await request.slackApp(), {
+              title,
+              channels,
+              prNumber: itemNumber,
+              projectName,
+              projectUrl,
+            })
             break
           default:
             fastify.log.info('Unhandled activity')
