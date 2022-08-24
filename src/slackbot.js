@@ -1,5 +1,15 @@
+import {
+  issueUpdatedMessage,
+  draftIssueCreatedMessage,
+  issueCreatedMessage,
+  issueDeletedMessage,
+  pullRequestCreatedMessage,
+  pullRequestDeletedMessage,
+  pullRequestMovedMessage,
+} from './messages.js'
+
 async function sendMessage(app, text, mdText, channels) {
-  return await Promise.all(
+  return Promise.all(
     channels.map(channel => {
       return app.client.chat.postMessage({
         channel,
@@ -18,56 +28,36 @@ async function sendMessage(app, text, mdText, channels) {
   )
 }
 
-export async function sendIssueUpdated(
-  app,
-  { issueUrl, issueNumber, title, column, projectUrl, channels, isDraft }
-) {
-  const itemMdText = isDraft
-    ? `Draft issue _${title}_`
-    : `Issue <${issueUrl}|#${issueNumber} ${title}>`
-  const itemText = isDraft
-    ? `Draft issue _${title}_`
-    : `Issue #${issueNumber} ${title}`
-  const text = `💡 ${itemText} has been moved to ${column} 🌈`
-  const mdText = `💡 ${itemMdText} has been moved to <${projectUrl}|${column}> 🌈`
-  return await sendMessage(app, text, mdText, channels)
+export async function sendIssueUpdated(app, channels, payload) {
+  const { text, mdText } = issueUpdatedMessage(payload)
+  return sendMessage(app, text, mdText, channels)
+}
+export async function sendPullRequestUpdated(app, channels, payload) {
+  const { text, mdText } = pullRequestMovedMessage(payload)
+  return sendMessage(app, text, mdText, channels)
 }
 
-export async function sendDraftIssueCreated(
-  app,
-  { authorUrl, authorName, title, projectName, projectUrl, channels }
-) {
-  const text = `💡 ${authorName} has a created a draft issue titled _${title}_ in ${projectName} 📝`
-  const mdText = `💡 <${authorUrl}|${authorName}> has a created a draft issue titled _${title}_ in <${projectUrl}|${projectName}> 📝`
-  return await sendMessage(app, text, mdText, channels)
+export async function sendDraftIssueCreated(app, channels, payload) {
+  const { text, mdText } = draftIssueCreatedMessage(payload)
+  return sendMessage(app, text, mdText, channels)
 }
 
-export async function sendIssueCreated(
-  app,
-  {
-    authorUrl,
-    authorName,
-    title,
-    issueNumber,
-    issueUrl,
-    projectUrl,
-    projectName,
-    channels,
-  }
-) {
-  const text = `💡 ${authorName} has a created an issue titled _#${issueNumber} ${title}_ in ${projectName} ➕️`
-  const mdText = `💡 <${authorUrl}|${authorName}> has a created an issue titled _<${issueUrl}|#${issueNumber} ${title}>_ in <${projectUrl}|${projectName}> ➕️`
-  return await sendMessage(app, text, mdText, channels)
+export async function sendIssueCreated(app, channels, payload) {
+  const { text, mdText } = issueCreatedMessage(payload)
+  return sendMessage(app, text, mdText, channels)
 }
 
-export async function sendIssueDeleted(
-  app,
-  { title, issueNumber, projectUrl, projectName, channels, isDraft }
-) {
-  const itemText = isDraft
-    ? `Draft issue _${title}_`
-    : `Issue _#${issueNumber} ${title}_`
-  const text = `💡 ${itemText} has been deleted from ${projectName} ❌`
-  const mdText = `💡 ${itemText} has been deleted from <${projectUrl}|${projectName}> ❌`
-  return await sendMessage(app, text, mdText, channels)
+export async function sendIssueDeleted(app, channels, payload) {
+  const { text, mdText } = issueDeletedMessage(payload)
+  return sendMessage(app, text, mdText, channels)
+}
+
+export async function sendPullRequestCreated(app, channels, payload) {
+  const { text, mdText } = pullRequestCreatedMessage(payload)
+  return sendMessage(app, text, mdText, channels)
+}
+
+export async function sendPullRequestDeleted(app, channels, payload) {
+  const { text, mdText } = pullRequestDeletedMessage(payload)
+  return sendMessage(app, text, mdText, channels)
 }

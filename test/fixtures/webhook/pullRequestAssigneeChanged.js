@@ -1,8 +1,8 @@
 export default {
-  action: 'created',
+  action: 'edited',
   projects_v2_item: {
-    id: 9224806,
-    node_id: 'PVTI_lADOBpWafM4AEgSvzgCMwmY',
+    id: 9232736,
+    node_id: 'PVTI_lADOBpWafM4AEgSvzgCM4WA',
     project_node_id: 'PVT_kwDOBpWafM4AEgSv',
     content_node_id: 'PR_kwDOHwYncM48gWNe',
     content_type: 'PullRequest',
@@ -32,9 +32,15 @@ export default {
       type: 'User',
       site_admin: false,
     },
-    created_at: '2022-08-24T13:03:27Z',
-    updated_at: '2022-08-24T13:03:27Z',
+    created_at: '2022-08-24T14:48:31Z',
+    updated_at: '2022-08-24T14:48:51Z',
     archived_at: null,
+  },
+  changes: {
+    field_value: {
+      field_node_id: 'PVTF_lADOBpWafM4AEgSvzgCmE-k',
+      field_type: 'assignees',
+    },
   },
   organization: {
     login: 'dev-test-org-3000',

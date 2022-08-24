@@ -4,7 +4,7 @@ import { GraphqlResponseError } from '@octokit/graphql'
 import { verifyRequest } from '../lib/verify-request.js'
 import * as webhook from '../lib/get-webhook-activity.js'
 import {
-  getIssueById,
+  getActivityById,
   getProjectById,
   getProjectItemById,
 } from '../src/graphql.js'
@@ -65,22 +65,26 @@ export default async function (fastify) {
         fastify.log.info('Unhandled activity')
         return
       }
+
       try {
-        let issue, project
+        let activity
         // for deleted items, the project items are deleted as well
         // we need to get the project by itself
-        if (activityType === webhook.ISSUE_DELETED) {
-          project = await getProjectById({
+        if (
+          activityType === webhook.ISSUE_DELETED ||
+          activityType === webhook.PR_DELETED
+        ) {
+          const { node: project } = await getProjectById({
             graphqlClient: await request.authenticateGraphql(),
             id: project_node_id,
           })
-          issue = {
+          activity = {
             node: {
-              project: project.node,
+              project,
             },
           }
         } else {
-          issue = await getProjectItemById({
+          activity = await getProjectItemById({
             graphqlClient: await request.authenticateGraphql(),
             id,
           })
@@ -90,8 +94,8 @@ export default async function (fastify) {
             creator: { url: itemAuthorUrl, login: authorUsername } = {},
             content: {
               title,
-              url: issueUrl,
-              number: issueNumber,
+              url: itemUrl,
+              number: itemNumber,
               author: { url: authorUrl, name: authorName } = {},
             } = {},
             project: {
@@ -101,65 +105,135 @@ export default async function (fastify) {
             },
             fieldValueByName: { name: column = null } = {},
           },
-        } = issue
+        } = activity
         const channels = slackChannels.map(({ name }) => name)
-
         switch (activityType) {
           case webhook.ISSUE_DELETED:
-            // When an issue is deleted, the content node of the ProjectV2Item is empty,
+            // When an activity is deleted, the content node of the ProjectV2Item is empty,
             // thus we have to fetch by content_node_id to get the title and number
             // eslint-disable-next-line prettier/prettier
             ({
-              node: { title, number: issueNumber },
-            } = await getIssueById({
+              node: { title, number: itemNumber },
+            } = await getActivityById({
               graphqlClient: await request.authenticateGraphql(),
               id: content_node_id,
             }))
-            await slackbot.sendIssueDeleted(await request.slackApp(), {
-              title,
+            await slackbot.sendIssueDeleted(
+              await request.slackApp(),
               channels,
-              issueNumber,
-              projectName,
-              projectUrl,
-              isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
-            })
+              {
+                title,
+                issueNumber: itemNumber,
+                projectName,
+                projectUrl,
+                isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
+              }
+            )
             break
           case webhook.DRAFT_CREATED:
-            await slackbot.sendDraftIssueCreated(await request.slackApp(), {
-              authorUrl: authorUrl || itemAuthorUrl,
-              authorName: authorName || authorUsername,
-              title,
+            await slackbot.sendDraftIssueCreated(
+              await request.slackApp(),
               channels,
-              issueNumber,
-              projectName,
-              projectUrl,
-            })
+              {
+                authorUrl: authorUrl || itemAuthorUrl,
+                authorName: authorName || authorUsername,
+                title,
+                issueNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
 
             break
           case webhook.ISSUE_CREATED:
-            await slackbot.sendIssueCreated(await request.slackApp(), {
-              authorUrl: authorUrl || itemAuthorUrl,
-              authorName: authorName || authorUsername,
-              title,
-              issueUrl,
+            await slackbot.sendIssueCreated(
+              await request.slackApp(),
               channels,
-              issueNumber,
-              projectName,
-              projectUrl,
-            })
+              {
+                authorUrl: authorUrl || itemAuthorUrl,
+                authorName: authorName || authorUsername,
+                title,
+                issueUrl: itemUrl,
+                issueNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
             break
           case webhook.ISSUE_MOVED:
-            await slackbot.sendIssueUpdated(await request.slackApp(), {
-              title,
-              column,
-              issueUrl,
-              issueNumber,
-              projectUrl,
+            await slackbot.sendIssueUpdated(
+              await request.slackApp(),
               channels,
-              isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
-            })
+              {
+                title,
+                column,
+                issueUrl: itemUrl,
+                issueNumber: itemNumber,
+                projectUrl,
+                isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
+              }
+            )
             break
-          case webhook.ISSUE_ASSIGNEES:
+          case webhook.PR_MOVED:
+            // eslint-disable-next-line prettier/prettier
+            ({
+              node: { title, number: itemNumber },
+            } = await getActivityById({
+              graphqlClient: await request.authenticateGraphql(),
+              id: content_node_id,
+            }))
+            await slackbot.sendPullRequestUpdated(
+              await request.slackApp(),
+              channels,
+              {
+                title,
+                column,
+                prNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
+            break
+          case webhook.PR_CREATED:
+            // eslint-disable-next-line prettier/prettier
+            ({
+              node: { title, number: itemNumber, url: itemUrl },
+            } = await getActivityById({
+              graphqlClient: await request.authenticateGraphql(),
+              id: content_node_id,
+            }))
+            await slackbot.sendPullRequestCreated(
+              await request.slackApp(),
+              channels,
+              {
+                authorUrl: authorUrl || itemAuthorUrl,
+                authorName: authorName || authorUsername,
+                title,
+                prUrl: itemUrl,
+                prNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
+            break
+          case webhook.PR_DELETED:
+            // eslint-disable-next-line prettier/prettier
+            ({
+              node: { title, number: itemNumber },
+            } = await getActivityById({
+              graphqlClient: await request.authenticateGraphql(),
+              id: content_node_id,
+            }))
+            await slackbot.sendPullRequestDeleted(
+              await request.slackApp(),
+              channels,
+              {
+                title,
+                prNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
             break
           default:
             fastify.log.info('Unhandled activity')

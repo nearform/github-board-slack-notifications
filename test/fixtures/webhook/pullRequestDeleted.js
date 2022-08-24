@@ -1,8 +1,8 @@
 export default {
-  action: 'created',
+  action: 'deleted',
   projects_v2_item: {
-    id: 9224806,
-    node_id: 'PVTI_lADOBpWafM4AEgSvzgCMwmY',
+    id: 9232416,
+    node_id: 'PVTI_lADOBpWafM4AEgSvzgCM4CA',
     project_node_id: 'PVT_kwDOBpWafM4AEgSv',
     content_node_id: 'PR_kwDOHwYncM48gWNe',
     content_type: 'PullRequest',
@@ -32,8 +32,8 @@ export default {
       type: 'User',
       site_admin: false,
     },
-    created_at: '2022-08-24T13:03:27Z',
-    updated_at: '2022-08-24T13:03:27Z',
+    created_at: '2022-08-24T14:44:44Z',
+    updated_at: '2022-08-24T14:48:12Z',
     archived_at: null,
   },
   organization: {
@@ -68,7 +68,6 @@ export default {
       'https://api.github.com/users/some-github-user/starred{/owner}{/repo}',
     subscriptions_url:
       'https://api.github.com/users/some-github-user/subscriptions',
-    organizations_url: 'https://api.github.com/users/some-github-user/orgs',
     repos_url: 'https://api.github.com/users/some-github-user/repos',
     events_url:
       'https://api.github.com/users/some-github-user/events{/privacy}',
