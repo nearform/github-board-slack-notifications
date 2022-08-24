@@ -24,7 +24,7 @@ test('get webhook activity', async t => {
           },
         },
       }),
-      null
+      undefined
     )
     t.equal(
       webhook.getActivity({
@@ -38,7 +38,7 @@ test('get webhook activity', async t => {
           },
         },
       }),
-      null
+      undefined
     )
     t.equal(
       webhook.getActivity({
@@ -52,7 +52,7 @@ test('get webhook activity', async t => {
           },
         },
       }),
-      null
+      undefined
     )
   })
 
