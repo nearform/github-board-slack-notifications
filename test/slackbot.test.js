@@ -8,7 +8,7 @@ import {
   issueCreatedMessage,
   draftIssueCreatedMessage,
   issueUpdatedMessage,
-  pullRequestUpdatedMessage,
+  pullRequestMovedMessage,
 } from '../src/messages.js'
 
 import { test } from 'tap'
@@ -238,7 +238,7 @@ test('test slackbot', async t => {
     ])
   })
 
-  t.test('sendPullRequestUpdated', async t => {
+  t.test('sendPullRequestMoved', async t => {
     const payload = {
       title: prTitle,
       prNumber,
@@ -252,7 +252,7 @@ test('test slackbot', async t => {
       payload
     )
     t.equal(stub.callCount, 1)
-    const { text, mdText } = pullRequestUpdatedMessage(payload)
+    const { text, mdText } = pullRequestMovedMessage(payload)
     t.same(response, [
       {
         text,

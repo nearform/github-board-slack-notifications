@@ -12,7 +12,7 @@ import itemDeleted from '../fixtures/webhook/itemDeleted.js'
 import getProjectItemByIdResponse from '../fixtures/graphql/getProjectItemByIdResponse.js'
 import pullRequestCreated from '../fixtures/webhook/pullRequestCreated.js'
 import pullRequestDeleted from '../fixtures/webhook/pullRequestDeleted.js'
-import pullRequestAssigneeChanged from '../fixtures/webhook/pullRequestAssigneeChanged.js'
+import pullRequestMoved from '../fixtures/webhook/pullRequestMoved.js'
 
 test('POST /webhook', async t => {
   t.afterEach(() => {
@@ -176,15 +176,15 @@ test('POST /webhook', async t => {
         t.equal(res.statusCode, 200)
       })
 
-      t.test('pr assignee changed', async t => {
+      t.test('pr moved', async t => {
         const signature = createSignature(
-          pullRequestAssigneeChanged,
+          pullRequestMoved,
           config.ORG_WEBHOOK_SECRET
         )
         const res = await app.inject({
           url: '/webhook',
           method: 'POST',
-          body: pullRequestAssigneeChanged,
+          body: pullRequestMoved,
           headers: {
             'X-Hub-Signature-256': signature,
           },

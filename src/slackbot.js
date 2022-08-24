@@ -5,7 +5,7 @@ import {
   issueDeletedMessage,
   pullRequestCreatedMessage,
   pullRequestDeletedMessage,
-  pullRequestUpdatedMessage,
+  pullRequestMovedMessage,
 } from './messages.js'
 
 async function sendMessage(app, text, mdText, channels) {
@@ -33,7 +33,7 @@ export async function sendIssueUpdated(app, channels, payload) {
   return sendMessage(app, text, mdText, channels)
 }
 export async function sendPullRequestUpdated(app, channels, payload) {
-  const { text, mdText } = pullRequestUpdatedMessage(payload)
+  const { text, mdText } = pullRequestMovedMessage(payload)
   return sendMessage(app, text, mdText, channels)
 }
 

@@ -102,7 +102,7 @@ export function pullRequestDeletedMessage({
   }
 }
 
-export function pullRequestUpdatedMessage({
+export function pullRequestMovedMessage({
   prNumber,
   title,
   column,
