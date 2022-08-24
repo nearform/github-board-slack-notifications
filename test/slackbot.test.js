@@ -8,6 +8,7 @@ import {
   issueCreatedMessage,
   draftIssueCreatedMessage,
   issueUpdatedMessage,
+  pullRequestUpdatedMessage,
 } from '../src/messages.js'
 
 import { test } from 'tap'
@@ -220,6 +221,38 @@ test('test slackbot', async t => {
     )
     t.equal(stub.callCount, 1)
     const { text, mdText } = pullRequestDeletedMessage(payload)
+    t.same(response, [
+      {
+        text,
+        channel: channels[0],
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: mdText,
+            },
+          },
+        ],
+      },
+    ])
+  })
+
+  t.test('sendPullRequestUpdated', async t => {
+    const payload = {
+      title: prTitle,
+      prNumber,
+      projectUrl,
+      projectName,
+      column,
+    }
+    const response = await slackbot.sendPullRequestUpdated(
+      slackApp,
+      channels,
+      payload
+    )
+    t.equal(stub.callCount, 1)
+    const { text, mdText } = pullRequestUpdatedMessage(payload)
     t.same(response, [
       {
         text,

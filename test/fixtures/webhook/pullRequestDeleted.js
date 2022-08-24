@@ -1,16 +1,16 @@
 export default {
   action: 'deleted',
   projects_v2_item: {
-    id: 8156154,
-    node_id: 'PVTI_lADOBpWafM4AEgSvzgB8c_o',
+    id: 9232416,
+    node_id: 'PVTI_lADOBpWafM4AEgSvzgCM4CA',
     project_node_id: 'PVT_kwDOBpWafM4AEgSv',
-    content_node_id: 'I_kwDOHwYncM5PMB7X',
+    content_node_id: 'PR_kwDOHwYncM48gWNe',
     content_type: 'PullRequest',
     creator: {
       login: 'some-github-user',
-      id: 29484805,
-      node_id: 'MDQ6VXNlcjI5NDg0ODA1',
-      avatar_url: 'https://avatars.githubusercontent.com/u/29484805?v=4',
+      id: 36735501,
+      node_id: 'MDQ6VXNlcjM2NzM1NTAx',
+      avatar_url: 'https://avatars.githubusercontent.com/u/36735501?v=4',
       gravatar_id: '',
       url: 'https://api.github.com/users/some-github-user',
       html_url: 'https://github.com/some-github-user',
@@ -32,8 +32,8 @@ export default {
       type: 'User',
       site_admin: false,
     },
-    created_at: '2022-08-04T12:54:31Z',
-    updated_at: '2022-08-04T12:54:31Z',
+    created_at: '2022-08-24T14:44:44Z',
+    updated_at: '2022-08-24T14:48:12Z',
     archived_at: null,
   },
   organization: {
@@ -54,9 +54,9 @@ export default {
   },
   sender: {
     login: 'some-github-user',
-    id: 29484805,
-    node_id: 'MDQ6VXNlcjI5NDg0ODA1',
-    avatar_url: 'https://avatars.githubusercontent.com/u/29484805?v=4',
+    id: 36735501,
+    node_id: 'MDQ6VXNlcjM2NzM1NTAx',
+    avatar_url: 'https://avatars.githubusercontent.com/u/36735501?v=4',
     gravatar_id: '',
     url: 'https://api.github.com/users/some-github-user',
     html_url: 'https://github.com/some-github-user',
@@ -68,7 +68,6 @@ export default {
       'https://api.github.com/users/some-github-user/starred{/owner}{/repo}',
     subscriptions_url:
       'https://api.github.com/users/some-github-user/subscriptions',
-    organizations_url: 'https://api.github.com/users/some-github-user/orgs',
     repos_url: 'https://api.github.com/users/some-github-user/repos',
     events_url:
       'https://api.github.com/users/some-github-user/events{/privacy}',
@@ -78,7 +77,7 @@ export default {
     site_admin: false,
   },
   installation: {
-    id: 27961269,
-    node_id: 'MDIzOkludGVncmF0aW9uSW5zdGFsbGF0aW9uMjc5NjEyNjk=',
+    id: 28062346,
+    node_id: 'MDIzOkludGVncmF0aW9uSW5zdGFsbGF0aW9uMjgwNjIzNDY=',
   },
 }

@@ -5,6 +5,7 @@ import {
   issueDeletedMessage,
   pullRequestCreatedMessage,
   pullRequestDeletedMessage,
+  pullRequestUpdatedMessage,
 } from './messages.js'
 
 async function sendMessage(app, text, mdText, channels) {
@@ -27,32 +28,36 @@ async function sendMessage(app, text, mdText, channels) {
   )
 }
 
-export async function sendIssueUpdated(app, channels, node) {
-  const { text, mdText } = issueUpdatedMessage(node)
+export async function sendIssueUpdated(app, channels, payload) {
+  const { text, mdText } = issueUpdatedMessage(payload)
+  return sendMessage(app, text, mdText, channels)
+}
+export async function sendPullRequestUpdated(app, channels, payload) {
+  const { text, mdText } = pullRequestUpdatedMessage(payload)
   return sendMessage(app, text, mdText, channels)
 }
 
-export async function sendDraftIssueCreated(app, channels, node) {
-  const { text, mdText } = draftIssueCreatedMessage(node)
+export async function sendDraftIssueCreated(app, channels, payload) {
+  const { text, mdText } = draftIssueCreatedMessage(payload)
   return sendMessage(app, text, mdText, channels)
 }
 
-export async function sendIssueCreated(app, channels, node) {
-  const { text, mdText } = issueCreatedMessage(node)
+export async function sendIssueCreated(app, channels, payload) {
+  const { text, mdText } = issueCreatedMessage(payload)
   return sendMessage(app, text, mdText, channels)
 }
 
-export async function sendIssueDeleted(app, channels, node) {
-  const { text, mdText } = issueDeletedMessage(node)
+export async function sendIssueDeleted(app, channels, payload) {
+  const { text, mdText } = issueDeletedMessage(payload)
   return sendMessage(app, text, mdText, channels)
 }
 
-export async function sendPullRequestCreated(app, channels, node) {
-  const { text, mdText } = pullRequestCreatedMessage(node)
+export async function sendPullRequestCreated(app, channels, payload) {
+  const { text, mdText } = pullRequestCreatedMessage(payload)
   return sendMessage(app, text, mdText, channels)
 }
 
-export async function sendPullRequestDeleted(app, channels, node) {
-  const { text, mdText } = pullRequestDeletedMessage(node)
+export async function sendPullRequestDeleted(app, channels, payload) {
+  const { text, mdText } = pullRequestDeletedMessage(payload)
   return sendMessage(app, text, mdText, channels)
 }

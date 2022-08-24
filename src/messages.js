@@ -38,7 +38,7 @@ export function draftIssueCreatedMessage({
 }) {
   return {
     text: `💡 ${authorName} has a created a draft issue titled _${title}_ in ${projectName} 📝`,
-    mdText: `💡 <${authorUrl}|${authorName}> has a created a draft issue titled _${title} _ in <${projectUrl}| ${projectName}> 📝`,
+    mdText: `💡 <${authorUrl}|${authorName}> has a created a draft issue titled _${title}_ in <${projectUrl}| ${projectName}> 📝`,
   }
 }
 
@@ -52,8 +52,8 @@ export function issueCreatedMessage({
   projectName,
 }) {
   return {
-    text: `💡 ${authorName} has a created an issue titled _#${issueNumber} ${title} _ in ${projectName} ➕️`,
-    mdText: `💡 <${authorUrl}| ${authorName}> has a created an issue titled _ < ${issueUrl}| #${issueNumber} ${title}> _ in <${projectUrl}| ${projectName}> ➕️`,
+    text: `💡 ${authorName} has a created an issue titled _#${issueNumber} ${title}_ in ${projectName} ➕️`,
+    mdText: `💡 <${authorUrl}| ${authorName}> has a created an issue titled _<${issueUrl}| #${issueNumber} ${title}>_ in <${projectUrl}| ${projectName}> ➕️`,
   }
 }
 
@@ -71,7 +71,7 @@ export function issueDeletedMessage({
   })
   return {
     text: `💡 ${itemText} has been deleted from ${projectName} ❌`,
-    mdText: `💡 ${itemText} has been deleted from < ${projectUrl}| ${projectName}> ❌`,
+    mdText: `💡 ${itemText} has been deleted from <${projectUrl}| ${projectName}> ❌`,
   }
 }
 
@@ -85,8 +85,8 @@ export function pullRequestCreatedMessage({
   projectName,
 }) {
   return {
-    text: `💡 ${authorName} has a created a Pull Request titled _#${prNumber} ${title} _ in ${projectName} ➕️`,
-    mdText: `💡 <${authorUrl}| ${authorName}> has a created a Pull Request titled _ < ${prUrl}| #${prNumber} ${title}> _ in <${projectUrl}| ${projectName}> ➕️`,
+    text: `💡 ${authorName} has a created a Pull Request titled _#${prNumber} ${title}_ in ${projectName} ➕️`,
+    mdText: `💡 <${authorUrl}| ${authorName}> has a created a Pull Request titled _<${prUrl}| #${prNumber} ${title}>_ in <${projectUrl}| ${projectName}> ➕️`,
   }
 }
 
@@ -98,6 +98,18 @@ export function pullRequestDeletedMessage({
 }) {
   return {
     text: `💡 Pull Request _#${prNumber} ${title}_ has been deleted from ${projectName} ❌`,
-    mdText: `💡 Pull Request _#${prNumber} ${title}_ has been deleted from < ${projectUrl}| ${projectName}> ❌`,
+    mdText: `💡 Pull Request _#${prNumber} ${title}_ has been deleted from <${projectUrl}| ${projectName}> ❌`,
+  }
+}
+
+export function pullRequestUpdatedMessage({
+  prNumber,
+  title,
+  column,
+  projectUrl,
+}) {
+  return {
+    text: `💡 Pull Request _#${prNumber} ${title}_ has been moved to ${column} 🌈`,
+    mdText: `💡 Pull Request _#${prNumber} ${title}_ has been moved to <${projectUrl}| ${column}> 🌈`,
   }
 }

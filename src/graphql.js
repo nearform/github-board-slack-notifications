@@ -1,7 +1,7 @@
 'use strict'
 
 export const getProjectItemById = async ({ graphqlClient, id }) => {
-  return await graphqlClient({
+  return graphqlClient({
     query: `query getProjectItem($id: ID!) {
       node(id: $id) {
         ... on ProjectV2Item {
@@ -70,8 +70,8 @@ export const getProjectItemById = async ({ graphqlClient, id }) => {
   })
 }
 
-export const getIssueById = async ({ graphqlClient, id }) => {
-  return await graphqlClient({
+export const getActivityById = async ({ graphqlClient, id }) => {
+  return graphqlClient({
     query: `query getProjectItem($id: ID!) {
       node(id: $id) {        
         ... on DraftIssue {
@@ -84,6 +84,7 @@ export const getIssueById = async ({ graphqlClient, id }) => {
       ... on PullRequest {
           number
           title
+          url
         }
       }
     }`,
@@ -92,7 +93,7 @@ export const getIssueById = async ({ graphqlClient, id }) => {
 }
 
 export const getProjectById = async ({ graphqlClient, id }) => {
-  return await graphqlClient({
+  return graphqlClient({
     query: `query getProjectItem($id: ID!) {
       node(id: $id) {        
         ... on ProjectV2 {
