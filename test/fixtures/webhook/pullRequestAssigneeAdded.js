@@ -5,7 +5,7 @@ export default {
     node_id: 'PVTI_lADOBpWafM4AEgSvzgB6TZc',
     project_node_id: 'PVT_kwDOBpWafM4AEgSv',
     content_node_id: 'I_kwDOHwYncM5PBkqx',
-    content_type: 'Issue',
+    content_type: 'PullRequest',
     creator: {
       login: 'some-github-user',
       id: 29484805,
@@ -38,8 +38,8 @@ export default {
   },
   changes: {
     field_value: {
-      field_node_id: 'PVTF_lADOBpWafM4AEgSvzgCmE-w',
-      field_type: 'linked_pull_requests',
+      field_node_id: 'PVTF_lADOBpWafM4AEgSvzgCmE-k',
+      field_type: 'assignees',
     },
   },
   organization: {

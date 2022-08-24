@@ -115,63 +115,78 @@ export default async function (fastify) {
               graphqlClient: await request.authenticateGraphql(),
               id: content_node_id,
             }))
-            await slackbot.sendIssueDeleted(await request.slackApp(), {
-              title,
+            await slackbot.sendIssueDeleted(
+              await request.slackApp(),
               channels,
-              issueNumber: itemNumber,
-              projectName,
-              projectUrl,
-              isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
-            })
+              {
+                title,
+                issueNumber: itemNumber,
+                projectName,
+                projectUrl,
+                isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
+              }
+            )
             break
           case webhook.DRAFT_CREATED:
-            await slackbot.sendDraftIssueCreated(await request.slackApp(), {
-              authorUrl: authorUrl || itemAuthorUrl,
-              authorName: authorName || authorUsername,
-              title,
+            await slackbot.sendDraftIssueCreated(
+              await request.slackApp(),
               channels,
-              issueNumber: itemNumber,
-              projectName,
-              projectUrl,
-            })
+              {
+                authorUrl: authorUrl || itemAuthorUrl,
+                authorName: authorName || authorUsername,
+                title,
+                issueNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
 
             break
           case webhook.ISSUE_CREATED:
-            await slackbot.sendIssueCreated(await request.slackApp(), {
-              authorUrl: authorUrl || itemAuthorUrl,
-              authorName: authorName || authorUsername,
-              title,
-              issueUrl: itemUrl,
+            await slackbot.sendIssueCreated(
+              await request.slackApp(),
               channels,
-              issueNumber: itemNumber,
-              projectName,
-              projectUrl,
-            })
+              {
+                authorUrl: authorUrl || itemAuthorUrl,
+                authorName: authorName || authorUsername,
+                title,
+                issueUrl: itemUrl,
+                issueNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
             break
           case webhook.ISSUE_MOVED:
-            await slackbot.sendIssueUpdated(await request.slackApp(), {
-              title,
-              column,
-              issueUrl: itemUrl,
-              issueNumber: itemNumber,
-              projectUrl,
+            await slackbot.sendIssueUpdated(
+              await request.slackApp(),
               channels,
-              isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
-            })
+              {
+                title,
+                column,
+                issueUrl: itemUrl,
+                issueNumber: itemNumber,
+                projectUrl,
+                isDraft: content_type === webhook.CONTENT_TYPE_DRAFT_ISSUE,
+              }
+            )
             break
           case webhook.ISSUE_ASSIGNEES:
             break
           case webhook.PR_CREATED:
-            await slackbot.sendPullRequestCreated(await request.slackApp(), {
-              authorUrl: authorUrl || itemAuthorUrl,
-              authorName: authorName || authorUsername,
-              title,
-              prUrl: itemUrl,
+            await slackbot.sendPullRequestCreated(
+              await request.slackApp(),
               channels,
-              prNumber: itemNumber,
-              projectName,
-              projectUrl,
-            })
+              {
+                authorUrl: authorUrl || itemAuthorUrl,
+                authorName: authorName || authorUsername,
+                title,
+                prUrl: itemUrl,
+                prNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
             break
           case webhook.PR_DELETED:
             // eslint-disable-next-line prettier/prettier
@@ -181,13 +196,16 @@ export default async function (fastify) {
               graphqlClient: await request.authenticateGraphql(),
               id: content_node_id,
             }))
-            await slackbot.sendPullRequestDeleted(await request.slackApp(), {
-              title,
+            await slackbot.sendPullRequestDeleted(
+              await request.slackApp(),
               channels,
-              prNumber: itemNumber,
-              projectName,
-              projectUrl,
-            })
+              {
+                title,
+                prNumber: itemNumber,
+                projectName,
+                projectUrl,
+              }
+            )
             break
           default:
             fastify.log.info('Unhandled activity')

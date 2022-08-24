@@ -1,6 +1,14 @@
 'use strict'
 import sinon from 'sinon'
 import * as slackbot from '../src/slackbot.js'
+import {
+  pullRequestDeletedMessage,
+  pullRequestCreatedMessage,
+  issueDeletedMessage,
+  issueCreatedMessage,
+  draftIssueCreatedMessage,
+  issueUpdatedMessage,
+} from '../src/messages.js'
 
 import { test } from 'tap'
 
@@ -35,26 +43,31 @@ test('test slackbot', async t => {
   })
 
   t.test('sendIssueUpdated', async t => {
-    const response = await slackbot.sendIssueUpdated(slackApp, {
+    const payload = {
       issueUrl,
       issueNumber,
       title,
       column,
       projectUrl,
-      channels,
       isDraft: false,
-    })
+    }
+    const response = await slackbot.sendIssueUpdated(
+      slackApp,
+      channels,
+      payload
+    )
     t.equal(stub.callCount, 1)
+    const { text, mdText } = issueUpdatedMessage(payload)
     t.same(response, [
       {
-        text: '💡 Issue #1 Test issue has been moved to Done 🌈',
+        text: text,
         channel: channels[0],
         blocks: [
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text: '💡 Issue <https://github.com/test-org/test-repo/issues/1|#1 Test issue> has been moved to <https://github.com/orgs/test-org/projects/1/views/1|Done> 🌈',
+              text: mdText,
             },
           },
         ],
@@ -63,7 +76,7 @@ test('test slackbot', async t => {
   })
 
   t.test('sendIssueCreated', async t => {
-    const response = await slackbot.sendIssueCreated(slackApp, {
+    const payload = {
       authorUrl,
       authorName,
       title,
@@ -71,22 +84,24 @@ test('test slackbot', async t => {
       issueUrl,
       projectUrl,
       projectName,
+    }
+    const response = await slackbot.sendIssueCreated(
+      slackApp,
       channels,
-    })
+      payload
+    )
     t.equal(stub.callCount, 1)
+    const { text, mdText } = issueCreatedMessage(payload)
     t.same(response, [
       {
-        text: '💡 testuser has a created an issue titled _#1 Test issue_ in Test Board ➕️',
+        text: text,
         channel: channels[0],
         blocks: [
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text:
-                '💡 <https://github.com/testuser|testuser> has a created an issue titled ' +
-                '_<https://github.com/test-org/test-repo/issues/1|#1 Test issue>_ in ' +
-                '<https://github.com/orgs/test-org/projects/1/views/1|Test Board> ➕️',
+              text: mdText,
             },
           },
         ],
@@ -94,27 +109,30 @@ test('test slackbot', async t => {
     ])
   })
   t.test('sendDraftIssueCreated', async t => {
-    const response = await slackbot.sendDraftIssueCreated(slackApp, {
+    const payload = {
       authorUrl,
       authorName,
       title,
       projectName,
       projectUrl,
+    }
+    const response = await slackbot.sendDraftIssueCreated(
+      slackApp,
       channels,
-    })
+      payload
+    )
     t.equal(stub.callCount, 1)
+    const { text, mdText } = draftIssueCreatedMessage(payload)
     t.same(response, [
       {
-        text: '💡 testuser has a created a draft issue titled _Test issue_ in Test Board 📝',
+        text,
         channel: channels[0],
         blocks: [
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text:
-                '💡 <https://github.com/testuser|testuser> has a created a draft issue titled _Test issue_ in ' +
-                '<https://github.com/orgs/test-org/projects/1/views/1|Test Board> 📝',
+              text: mdText,
             },
           },
         ],
@@ -122,27 +140,30 @@ test('test slackbot', async t => {
     ])
   })
   t.test('sendIssueDeleted', async t => {
-    const response = await slackbot.sendIssueDeleted(slackApp, {
+    const payload = {
       title,
       issueNumber,
       projectUrl,
       projectName,
-      channels,
       isDraft: false,
-    })
+    }
+    const response = await slackbot.sendIssueDeleted(
+      slackApp,
+      channels,
+      payload
+    )
     t.equal(stub.callCount, 1)
+    const { text, mdText } = issueDeletedMessage(payload)
     t.same(response, [
       {
-        text: '💡 Issue _#1 Test issue_ has been deleted from Test Board ❌',
+        text: text,
         channel: channels[0],
         blocks: [
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text:
-                '💡 Issue _#1 Test issue_ has been deleted from ' +
-                '<https://github.com/orgs/test-org/projects/1/views/1|Test Board> ❌',
+              text: mdText,
             },
           },
         ],
@@ -151,7 +172,7 @@ test('test slackbot', async t => {
   })
 
   t.test('sendPullRequestCreated', async t => {
-    const response = await slackbot.sendPullRequestCreated(slackApp, {
+    const payload = {
       authorUrl,
       authorName,
       title: prTitle,
@@ -159,22 +180,25 @@ test('test slackbot', async t => {
       prUrl,
       projectUrl,
       projectName,
+    }
+    const response = await slackbot.sendPullRequestCreated(
+      slackApp,
       channels,
-    })
+      payload
+    )
+
     t.equal(stub.callCount, 1)
+    const { text, mdText } = pullRequestCreatedMessage(payload)
     t.same(response, [
       {
-        text: '💡 testuser has a created a Pull Request titled _#1 Test pull request_ in Test Board ➕️',
+        text,
         channel: channels[0],
         blocks: [
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text:
-                '💡 <https://github.com/testuser|testuser> has a created a Pull Request titled ' +
-                '_<https://github.com/test-org/test-repo/pull/1|#1 Test pull request>_ in ' +
-                '<https://github.com/orgs/test-org/projects/1/views/1|Test Board> ➕️',
+              text: mdText,
             },
           },
         ],
@@ -183,26 +207,29 @@ test('test slackbot', async t => {
   })
 
   t.test('sendPullRequestDeleted', async t => {
-    const response = await slackbot.sendPullRequestDeleted(slackApp, {
+    const payload = {
       title: prTitle,
       prNumber,
       projectUrl,
       projectName,
+    }
+    const response = await slackbot.sendPullRequestDeleted(
+      slackApp,
       channels,
-    })
+      payload
+    )
     t.equal(stub.callCount, 1)
+    const { text, mdText } = pullRequestDeletedMessage(payload)
     t.same(response, [
       {
-        text: '💡 Pull Request _#1 Test pull request_ has been deleted from Test Board ❌',
+        text,
         channel: channels[0],
         blocks: [
           {
             type: 'section',
             text: {
               type: 'mrkdwn',
-              text:
-                '💡 Pull Request _#1 Test pull request_ has been deleted from ' +
-                '<https://github.com/orgs/test-org/projects/1/views/1|Test Board> ❌',
+              text: mdText,
             },
           },
         ],
