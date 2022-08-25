@@ -1,8 +1,8 @@
 export function issueIsDraft({ isDraft, title, issueUrl, issueNumber }) {
   return {
     itemMdText: isDraft
-      ? `Draft issue _${title}_`
-      : `Issue <${issueUrl}|#${issueNumber} ${title}>`,
+      ? `Draft issue _${escapeMarkdown(title)}_`
+      : `Issue <${issueUrl}|#${issueNumber} ${escapeMarkdown(title)}>`,
     itemText: isDraft
       ? `Draft issue _${title}_`
       : `Issue #${issueNumber} ${title}`,
@@ -53,7 +53,9 @@ export function issueCreatedMessage({
 }) {
   return {
     text: `💡 ${authorName} has a created an issue titled _#${issueNumber} ${title}_ in ${projectName} ➕️`,
-    mdText: `💡 <${authorUrl}| ${authorName}> has a created an issue titled _<${issueUrl}| #${issueNumber} ${title}>_ in <${projectUrl}| ${projectName}> ➕️`,
+    mdText: `💡 <${authorUrl}| ${authorName}> has a created an issue titled _<${issueUrl}| #${issueNumber} ${escapeMarkdown(
+      title
+    )}>_ in <${projectUrl}| ${projectName}> ➕️`,
   }
 }
 
@@ -86,7 +88,9 @@ export function pullRequestCreatedMessage({
 }) {
   return {
     text: `💡 ${authorName} has a created a Pull Request titled _#${prNumber} ${title}_ in ${projectName} ➕️`,
-    mdText: `💡 <${authorUrl}| ${authorName}> has a created a Pull Request titled _<${prUrl}| #${prNumber} ${title}>_ in <${projectUrl}| ${projectName}> ➕️`,
+    mdText: `💡 <${authorUrl}| ${authorName}> has a created a Pull Request titled _<${prUrl}| #${prNumber} ${escapeMarkdown(
+      title
+    )}>_ in <${projectUrl}| ${projectName}> ➕️`,
   }
 }
 
@@ -98,7 +102,9 @@ export function pullRequestDeletedMessage({
 }) {
   return {
     text: `💡 Pull Request _#${prNumber} ${title}_ has been deleted from ${projectName} ❌`,
-    mdText: `💡 Pull Request _#${prNumber} ${title}_ has been deleted from <${projectUrl}| ${projectName}> ❌`,
+    mdText: `💡 Pull Request _#${prNumber} ${escapeMarkdown(
+      title
+    )}_ has been deleted from <${projectUrl}| ${projectName}> ❌`,
   }
 }
 
@@ -110,6 +116,57 @@ export function pullRequestMovedMessage({
 }) {
   return {
     text: `💡 Pull Request _#${prNumber} ${title}_ has been moved to ${column} 🌈`,
-    mdText: `💡 Pull Request _#${prNumber} ${title}_ has been moved to <${projectUrl}| ${column}> 🌈`,
+    mdText: `💡 Pull Request _#${prNumber} ${escapeMarkdown(
+      title
+    )}_ has been moved to <${projectUrl}| ${column}> 🌈`,
   }
+}
+
+const replacements = [
+  {
+    regex: /\*/g,
+    replacement: '\\*',
+  },
+  {
+    regex: /#/g,
+    replacement: '\\#',
+  },
+  {
+    regex: /\//g,
+    replacement: '\\/',
+  },
+  {
+    regex: /\(/g,
+    replacement: '\\(',
+  },
+  {
+    regex: /\)/g,
+    replacement: '\\)',
+  },
+  {
+    regex: /\[/g,
+    replacement: '\\[',
+  },
+  {
+    regex: /\]/g,
+    replacement: '\\]',
+  },
+  {
+    regex: /</g,
+    replacement: '&lt;',
+  },
+  {
+    regex: />/g,
+    replacement: '&gt;',
+  },
+  {
+    regex: /_/g,
+    replacement: '\\_',
+  },
+]
+
+function escapeMarkdown(text) {
+  return replacements.reduce((acc, { regex, replacement }) => {
+    return acc.replace(regex, replacement)
+  }, text)
 }
