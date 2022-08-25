@@ -122,7 +122,7 @@ export function pullRequestMovedMessage({
   }
 }
 
-const replacements = [
+export const markdownEscapes = [
   {
     regex: /\*/g,
     replacement: '\\*',
@@ -165,8 +165,8 @@ const replacements = [
   },
 ]
 
-function escapeMarkdown(text) {
-  return replacements.reduce((acc, { regex, replacement }) => {
+export function escapeMarkdown(text) {
+  return markdownEscapes.reduce((acc, { regex, replacement }) => {
     return acc.replace(regex, replacement)
   }, text)
 }
