@@ -1,8 +1,11 @@
 'use strict'
 
 import { test } from 'tap'
-
-import { build } from '../helper.js'
+import {
+  build,
+  isMarkdownEscapeValid,
+  generateRandomString,
+} from '../helper.js'
 import config from '../../src/config.js'
 import { createSignature } from '../../lib/verify-request.js'
 import sinon from 'sinon'
@@ -13,6 +16,7 @@ import getProjectItemByIdResponse from '../fixtures/graphql/getProjectItemByIdRe
 import pullRequestCreated from '../fixtures/webhook/pullRequestCreated.js'
 import pullRequestDeleted from '../fixtures/webhook/pullRequestDeleted.js'
 import pullRequestMoved from '../fixtures/webhook/pullRequestMoved.js'
+import { escapeMarkdown } from '../../src/messages.js'
 
 test('POST /webhook', async t => {
   t.afterEach(() => {
@@ -191,6 +195,12 @@ test('POST /webhook', async t => {
         })
         t.equal(slackStub.callCount, 1)
         t.equal(res.statusCode, 200)
+      })
+
+      t.test('markdown is escaped correctly', async t => {
+        const testString = escapeMarkdown(generateRandomString(50))
+        const isValid = isMarkdownEscapeValid(testString)
+        t.equal(isValid, true)
       })
     }
   )
