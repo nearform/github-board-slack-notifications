@@ -1,125 +1,51 @@
-export function issueIsDraft({ isDraft, title, issueUrl, issueNumber }) {
-  return {
-    itemMdText: isDraft
-      ? `Draft issue _${escapeMarkdown(title)}_`
-      : `Issue <${issueUrl}|#${issueNumber} ${escapeMarkdown(title)}>`,
-    itemText: isDraft
-      ? `Draft issue _${title}_`
-      : `Issue #${issueNumber} ${title}`,
-  }
+export function getChangesMessage({ actionConfig, changes }) {
+  const { changes: changesConfig } = actionConfig
+  const { message } = changesConfig[changes.field_value?.field_type]
+  return { message }
 }
 
-export function issueUpdatedMessage({
-  issueUrl,
-  issueNumber,
-  title,
-  column,
-  projectUrl,
-  isDraft,
-}) {
-  const { itemMdText, itemText } = issueIsDraft({
-    isDraft,
-    title,
-    issueUrl,
-    issueNumber,
+export function getRawMessage({ actionConfig, changes }) {
+  const { message } = isValidChange({ actionConfig, changes })
+    ? getChangesMessage({ actionConfig, changes })
+    : actionConfig
+  return message
+}
+
+function isValidChange({ actionConfig, changes }) {
+  return (
+    Object.hasOwn(actionConfig, 'changes') &&
+    changes?.field_value?.field_type in actionConfig['changes']
+  )
+}
+
+export function formatMessage({ content_type, node, message }) {
+  const {
+    creator: { url: creatorUrl, login: creatorName },
+    project: { number, url: projectUrl, title: projectName },
+    content: {
+      author: { url: authorUrl, name: authorName },
+      title,
+      url: itemUrl,
+      number: itemNumber,
+    },
+  } = node
+  return replaceKeys(message, {
+    authorUrl: authorUrl ? authorUrl : creatorUrl,
+    number,
+    authorName: authorName ? authorName : creatorName,
+    projectUrl,
+    itemUrl,
+    itemNumber,
+    projectName,
+    title: escapeMarkdown(title),
+    content_type,
   })
-  return {
-    text: `💡 ${itemText} has been moved to ${column} 🌈`,
-    mdText: `💡 ${itemMdText} has been moved to <${projectUrl}|${column}> 🌈`,
-  }
 }
 
-export function draftIssueCreatedMessage({
-  authorUrl,
-  authorName,
-  title,
-  projectName,
-  projectUrl,
-}) {
-  return {
-    text: `💡 ${authorName} has a created a draft issue titled _${title}_ in ${projectName} 📝`,
-    mdText: `💡 <${authorUrl}|${authorName}> has a created a draft issue titled _${title}_ in <${projectUrl}| ${projectName}> 📝`,
-  }
-}
-
-export function issueCreatedMessage({
-  authorUrl,
-  authorName,
-  title,
-  issueNumber,
-  issueUrl,
-  projectUrl,
-  projectName,
-}) {
-  return {
-    text: `💡 ${authorName} has a created an issue titled _#${issueNumber} ${title}_ in ${projectName} ➕️`,
-    mdText: `💡 <${authorUrl}| ${authorName}> has a created an issue titled _<${issueUrl}| #${issueNumber} ${escapeMarkdown(
-      title
-    )}>_ in <${projectUrl}| ${projectName}> ➕️`,
-  }
-}
-
-export function issueDeletedMessage({
-  title,
-  issueNumber,
-  projectUrl,
-  projectName,
-  isDraft,
-}) {
-  const { itemText } = issueIsDraft({
-    isDraft,
-    title,
-    issueNumber,
-  })
-  return {
-    text: `💡 ${itemText} has been deleted from ${projectName} ❌`,
-    mdText: `💡 ${itemText} has been deleted from <${projectUrl}| ${projectName}> ❌`,
-  }
-}
-
-export function pullRequestCreatedMessage({
-  authorUrl,
-  authorName,
-  title,
-  prNumber,
-  prUrl,
-  projectUrl,
-  projectName,
-}) {
-  return {
-    text: `💡 ${authorName} has a created a Pull Request titled _#${prNumber} ${title}_ in ${projectName} ➕️`,
-    mdText: `💡 <${authorUrl}| ${authorName}> has a created a Pull Request titled _<${prUrl}| #${prNumber} ${escapeMarkdown(
-      title
-    )}>_ in <${projectUrl}| ${projectName}> ➕️`,
-  }
-}
-
-export function pullRequestDeletedMessage({
-  prNumber,
-  title,
-  projectName,
-  projectUrl,
-}) {
-  return {
-    text: `💡 Pull Request _#${prNumber} ${title}_ has been deleted from ${projectName} ❌`,
-    mdText: `💡 Pull Request _#${prNumber} ${escapeMarkdown(
-      title
-    )}_ has been deleted from <${projectUrl}| ${projectName}> ❌`,
-  }
-}
-
-export function pullRequestMovedMessage({
-  prNumber,
-  title,
-  column,
-  projectUrl,
-}) {
-  return {
-    text: `💡 Pull Request _#${prNumber} ${title}_ has been moved to ${column} 🌈`,
-    mdText: `💡 Pull Request _#${prNumber} ${escapeMarkdown(
-      title
-    )}_ has been moved to <${projectUrl}| ${column}> 🌈`,
-  }
+function replaceKeys(message, valuesToReplace) {
+  return Object.entries(valuesToReplace).reduce((acc, [key, value]) => {
+    return acc.replace(`{${key}}`, value)
+  }, message)
 }
 
 export const markdownEscapes = [

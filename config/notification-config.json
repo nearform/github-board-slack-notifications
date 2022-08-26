@@ -1,0 +1,29 @@
+{
+    "actions": {
+        "created": {
+            "message": "💡 <{authorUrl}| {authorName}> has a created a {content_type} titled _<{itemUrl}| #{itemNumber} {title}>_ in <{projectUrl}| {projectName}> ➕️"
+        },
+        "deleted": {
+            "message": "💡 {content_type} _#{itemNumber} {title}_ has been deleted from <{projectUrl}| {projectName}> ❌"
+        },
+        "converted": {
+            "message": "{content_type} _<{itemUrl}| #{itemNumber}>_ has been converted",
+            "changes": {
+                "Issue": {
+                    "message": "💡 <{authorUrl}| {authorName}> has a created a {content_type} titled _<{itemUrl}| #{issueitemNumber} {title})}>_ in <{projectUrl}| {projectName}> ➕️"
+                }
+            }
+        },
+        "edited": {
+            "message": "{content_type} _<{itemUrl}| #{itemNumber} {title}>_ has been edited 🌈",
+            "changes": {
+                "single_select": {
+                    "message": "💡 {content_type} _<{itemUrl}| #{itemNumber} {title}>_ {changed_item} has been changed to {change} 🌈"
+                },
+                "assignees": {
+                    "message": "💡 {content_type} _<{itemUrl}| #{itemNumber} {title}>_ has been assigned to {change} 🌈"
+                }
+            }
+        }
+    }
+}
