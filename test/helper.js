@@ -39,3 +39,7 @@ export function generateRandomString(strlength) {
   }
   return result
 }
+
+export function isMessageValid(text) {
+  return text.search(/\{(.*?)\}/gm) === -1
+}

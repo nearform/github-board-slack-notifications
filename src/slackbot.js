@@ -59,7 +59,7 @@ function getChannels({ node }) {
   return options.map(({ name }) => name)
 }
 
-function getContentType(request) {
+export function getContentType(request) {
   const {
     body: {
       projects_v2_item: { content_type },

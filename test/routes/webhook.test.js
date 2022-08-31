@@ -1,22 +1,17 @@
 'use strict'
 
-import { test } from 'tap'
-import {
-  build,
-  isMarkdownEscapeValid,
-  generateRandomString,
-} from '../helper.js'
-import config from '../../src/config.js'
-import { createSignature } from '../../lib/verify-request.js'
 import sinon from 'sinon'
-import itemCreated from '../fixtures/webhook/itemCreated.js'
-import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
-import itemDeleted from '../fixtures/webhook/itemDeleted.js'
+import { test } from 'tap'
+import { createSignature } from '../../lib/verify-request.js'
+import config from '../../src/config.js'
 import getProjectItemByIdResponse from '../fixtures/graphql/getProjectItemByIdResponse.js'
+import itemCreated from '../fixtures/webhook/itemCreated.js'
+import itemDeleted from '../fixtures/webhook/itemDeleted.js'
+import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
 import pullRequestCreated from '../fixtures/webhook/pullRequestCreated.js'
 import pullRequestDeleted from '../fixtures/webhook/pullRequestDeleted.js'
 import pullRequestMoved from '../fixtures/webhook/pullRequestMoved.js'
-import { escapeMarkdown } from '../../src/messages.js'
+import { build } from '../helper.js'
 
 test('POST /webhook', async t => {
   t.afterEach(() => {
@@ -180,6 +175,9 @@ test('POST /webhook', async t => {
         t.equal(res.statusCode, 200)
       })
 
+      /**
+       * the request should be ignored because it is of type reordered
+       */
       t.test('pr moved', async t => {
         const signature = createSignature(
           pullRequestMoved,
@@ -193,14 +191,8 @@ test('POST /webhook', async t => {
             'X-Hub-Signature-256': signature,
           },
         })
-        t.equal(slackStub.callCount, 1)
+        t.equal(slackStub.callCount, 0)
         t.equal(res.statusCode, 200)
-      })
-
-      t.test('markdown is escaped correctly', async t => {
-        const testString = escapeMarkdown(generateRandomString(50))
-        const isValid = isMarkdownEscapeValid(testString)
-        t.equal(isValid, true)
       })
     }
   )
