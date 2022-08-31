@@ -25,6 +25,9 @@ test('test slackbot', async t => {
       title: 'project-name',
     },
     content: {
+      assignees: {
+        nodes: [{ name: 'Some user' }],
+      },
       author: {
         url: 'https://api.github.com/users/JohanX',
         name: 'some-author-name',
@@ -33,6 +36,7 @@ test('test slackbot', async t => {
       url: 'https://api.github.com/users/some-github-user',
       number: '1',
     },
+    fieldValueByName: { name: 'Status' },
   }
 
   t.afterEach(() => {
@@ -52,7 +56,26 @@ test('test slackbot', async t => {
     }
   })
 
-  t.test('check no changes messages are formatted correctly', async t => {
+  t.test('change messages are formatted correctly', async t => {
+    const { actions } = notificationConfig
+    for (const [content_type, actionConfig] of Object.entries(actions)) {
+      if (Object.hasOwn(actionConfig, 'changes')) {
+        const { changes } = actionConfig
+        for (const [, change_config] of Object.entries(changes)) {
+          const { message } = change_config
+          const formattedMessage = formatMessage({
+            content_type,
+            node,
+            message,
+            extra: { changed_field: 'Status' },
+          })
+          t.equal(true, isMessageValid(formattedMessage))
+        }
+      }
+    }
+  })
+
+  t.test('messages are formatted correctly', async t => {
     const { actions } = notificationConfig
     for (const [key, value] of Object.entries(actions)) {
       const { message } = value

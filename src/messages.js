@@ -1,12 +1,27 @@
-export function getChangesMessage({ actionConfig, changes }) {
+import { getChangedItem } from './graphql.js'
+
+export async function getChangesMessage({ actionConfig, changes, request }) {
   const { changes: changesConfig } = actionConfig
   const { message } = changesConfig[changes.field_value?.field_type]
-  return { message }
+  return { message: await prepareChangeMessage({ changes, request, message }) }
 }
 
-export function getRawMessage({ actionConfig, changes }) {
+export async function prepareChangeMessage({ changes, request, message }) {
+  const {
+    field_value: { field_node_id },
+  } = changes
+  const {
+    node: { name: changed_field },
+  } = await getChangedItem({
+    graphqlClient: await request.authenticateGraphql(),
+    id: field_node_id,
+  })
+  return replaceKeys(message, { changed_field })
+}
+
+export async function getRawMessage({ actionConfig, changes, request }) {
   const { message } = isValidChange({ actionConfig, changes })
-    ? getChangesMessage({ actionConfig, changes })
+    ? await getChangesMessage({ actionConfig, changes, request })
     : actionConfig
   return message
 }
@@ -18,16 +33,24 @@ function isValidChange({ actionConfig, changes }) {
   )
 }
 
-export function formatMessage({ content_type, node, message }) {
+function parseAssignees(assignees) {
+  return assignees && Object.hasOwn(assignees, 'nodes')
+    ? assignees.nodes.map(assignee => assignee.name)
+    : []
+}
+
+export function formatMessage({ content_type, node, message, extra }) {
   const {
     creator: { url: creatorUrl, login: creatorName },
     project: { number, url: projectUrl, title: projectName },
     content: {
+      assignees,
       author: { url: authorUrl, name: authorName },
       title,
       url: itemUrl,
       number: itemNumber,
     },
+    fieldValueByName: { name: updated_value },
   } = node
   return replaceKeys(message, {
     authorUrl: authorUrl ? authorUrl : creatorUrl,
@@ -35,10 +58,13 @@ export function formatMessage({ content_type, node, message }) {
     authorName: authorName ? authorName : creatorName,
     projectUrl,
     itemUrl,
+    updated_value,
     itemNumber,
     projectName,
     title: escapeMarkdown(title),
     content_type,
+    assignees: parseAssignees(assignees),
+    ...extra,
   })
 }
 

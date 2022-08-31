@@ -37,7 +37,7 @@ export async function sendNotification({ request, app }) {
   const message = formatMessage({
     content_type: getContentType(request),
     node,
-    message: getRawMessage({ actionConfig, changes }),
+    message: await getRawMessage({ actionConfig, changes, request }),
   })
 
   return sendMessage({ app, text: message, channels: getChannels({ node }) })
