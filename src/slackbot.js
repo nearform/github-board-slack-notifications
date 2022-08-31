@@ -1,10 +1,6 @@
 import { getRawMessage, formatMessage } from './messages.js'
 import { notificationConfig } from './config.js'
-import {
-  getActivityById,
-  getProjectById,
-  getProjectItemById,
-} from '../src/graphql.js'
+import { getItem } from '../src/graphql.js'
 
 async function sendMessage({ app, text, channels }) {
   return Promise.all(
@@ -66,30 +62,4 @@ export function getContentType(request) {
     },
   } = request
   return content_type
-}
-
-async function getItem(request) {
-  const {
-    projects_v2_item: { node_id, content_node_id, project_node_id },
-  } = request.body
-
-  return getProjectItem({ request, node_id }).catch(async () => ({
-    node: {
-      project: await getProjectById({
-        graphqlClient: await request.authenticateGraphql(),
-        id: project_node_id,
-      }),
-      activity: await getActivityById({
-        graphqlClient: await request.authenticateGraphql(),
-        id: content_node_id,
-      }),
-    },
-  }))
-}
-
-async function getProjectItem({ request, node_id }) {
-  return getProjectItemById({
-    graphqlClient: await request.authenticateGraphql(),
-    id: node_id,
-  })
 }

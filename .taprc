@@ -8,3 +8,4 @@ node-arg:
 nyc-arg:
   - --exclude=plugins/authenticate-graphql.js
   - --exclude=plugins/init-slack-app.js
+  - --exclude=src/graphql.js
