@@ -149,39 +149,3 @@ export const getChangedItem = async ({ graphqlClient, id }) => {
     id,
   })
 }
-
-export async function getItem(request) {
-  const {
-    projects_v2_item: { node_id, content_node_id, project_node_id },
-  } = request.body
-
-  return getProjectItem({ request, node_id }).catch(async () => {
-    const { node: project } = await getProjectById({
-      graphqlClient: await request.authenticateGraphql(),
-      id: project_node_id,
-    })
-    const { node: content } = await getActivityById({
-      graphqlClient: await request.authenticateGraphql(),
-      id: content_node_id,
-    })
-    return {
-      node: {
-        project,
-        content: content
-          ? content
-          : {
-              author: {},
-            },
-        creator: {},
-        fieldValueByName: {},
-      },
-    }
-  })
-}
-
-async function getProjectItem({ request, node_id }) {
-  return getProjectItemById({
-    graphqlClient: await request.authenticateGraphql(),
-    id: node_id,
-  })
-}

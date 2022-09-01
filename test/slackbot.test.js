@@ -4,8 +4,13 @@ import {
   generateRandomString,
   isMarkdownEscapeValid,
   isMessageValid,
+  createRandomAssignees,
 } from './helper.js'
-import { escapeMarkdown, formatMessage } from '../src/messages.js'
+import {
+  escapeMarkdown,
+  formatMessage,
+  parseAssignees,
+} from '../src/messages.js'
 import { test } from 'tap'
 import itemCreated from './fixtures/webhook/itemCreated.js'
 import * as slackbot from '../src/slackbot.js'
@@ -92,5 +97,37 @@ test('test slackbot', async t => {
     const testString = escapeMarkdown(generateRandomString(50))
     const isValid = isMarkdownEscapeValid(testString)
     t.equal(isValid, true)
+  })
+
+  t.test('assignees are parse correctly', async t => {
+    const parsedAssignees = createRandomAssignees().map(assignee =>
+      parseAssignees(assignee)
+    )
+    t.equal(
+      true,
+      parsedAssignees.every(parsedAssignee => Array.isArray(parsedAssignee))
+    )
+  })
+
+  t.test('format message fills authoUrl correctly', async t => {
+    const message = '{authorUrl} {authorName}'
+    const authorUrl = 'https://api.github.com/users/some-author'
+    const authorName = 'some-author'
+    const creatorUrl = 'https://api.github.com/users/some-creator'
+    const creatorName = 'some-creator'
+    const node = {
+      creator: { url: creatorUrl, login: creatorName },
+      project: {},
+      content: {
+        author: { url: authorUrl, name: authorName },
+      },
+      fieldValueByName: {},
+    }
+    const formattedMessageWithAuthor = formatMessage({ message, node })
+    node.content.author = {}
+    const formattedMessageWithCreator = formatMessage({ message, node })
+
+    t.equal(`${authorUrl} ${authorName}`, formattedMessageWithAuthor)
+    t.equal(`${creatorUrl} ${creatorName}`, formattedMessageWithCreator)
   })
 })

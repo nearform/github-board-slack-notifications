@@ -11,6 +11,7 @@ import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo
 import pullRequestCreated from '../fixtures/webhook/pullRequestCreated.js'
 import pullRequestDeleted from '../fixtures/webhook/pullRequestDeleted.js'
 import pullRequestMoved from '../fixtures/webhook/pullRequestMoved.js'
+import itemInvalidNodeId from '../fixtures/webhook/itemInvalidNodeId.js'
 import { build } from '../helper.js'
 
 test('POST /webhook', async t => {
@@ -192,6 +193,23 @@ test('POST /webhook', async t => {
           },
         })
         t.equal(slackStub.callCount, 0)
+        t.equal(res.statusCode, 200)
+      })
+
+      t.test('item with a non existent node_id', async t => {
+        const signature = createSignature(
+          itemInvalidNodeId,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemInvalidNodeId,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(slackStub.callCount, 1)
         t.equal(res.statusCode, 200)
       })
     }

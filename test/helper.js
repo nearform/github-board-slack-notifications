@@ -43,3 +43,29 @@ export function generateRandomString(strlength) {
 export function isMessageValid(text) {
   return text.search(/\{(.*?)\}/gm) === -1
 }
+
+export function createRandomAssignees() {
+  return [
+    {
+      nodes: [
+        {
+          name: 'some-name',
+        },
+        {
+          name: 'some-other-name',
+        },
+      ],
+    },
+    {
+      nodes: [],
+    },
+    {},
+    {
+      nodes: [{}],
+    },
+    {
+      nodes: {},
+    },
+    undefined,
+  ]
+}

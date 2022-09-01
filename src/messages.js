@@ -33,9 +33,11 @@ function isValidChange({ actionConfig, changes }) {
   )
 }
 
-function parseAssignees(assignees) {
-  return assignees && Object.hasOwn(assignees, 'nodes')
-    ? assignees.nodes.map(assignee => assignee.name)
+export function parseAssignees(assignees) {
+  return assignees &&
+    Object.hasOwn(assignees, 'nodes') &&
+    Array.isArray(assignees.nodes)
+    ? assignees.nodes.map(assignee => assignee?.name)
     : []
 }
 
@@ -120,5 +122,5 @@ export const markdownEscapes = [
 export function escapeMarkdown(text) {
   return markdownEscapes.reduce((acc, { regex, replacement }) => {
     return acc.replace(regex, replacement)
-  }, text)
+  }, text || '')
 }
