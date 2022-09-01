@@ -68,35 +68,32 @@ export function getContentType(request) {
   return content_type
 }
 
-/* istanbul ignore next */
 export async function getItem(request) {
   const {
     projects_v2_item: { node_id, content_node_id, project_node_id },
   } = request.body
 
-  return getProjectItemById({
-    graphqlClient: await request.authenticateGraphql(),
-    id: node_id,
-  }).catch(async () => {
+  try {
+    return await getProjectItemById({
+      graphqlClient: await request.authenticateGraphql(),
+      id: node_id,
+    })
+  } catch (error) {
     const { node: project } = await getProjectById({
       graphqlClient: await request.authenticateGraphql(),
       id: project_node_id,
     })
+
     const { node: content } = await getActivityById({
       graphqlClient: await request.authenticateGraphql(),
       id: content_node_id,
     })
+
     return {
       node: {
         project,
-        content: content
-          ? content
-          : {
-              author: {},
-            },
-        creator: {},
-        fieldValueByName: {},
+        content,
       },
     }
-  })
+  }
 }

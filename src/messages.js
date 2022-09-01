@@ -42,32 +42,27 @@ export function parseAssignees(assignees) {
 }
 
 export function formatMessage({ content_type, node, message, extra }) {
-  const {
-    creator: { url: creatorUrl, login: creatorName },
-    project: { number, url: projectUrl, title: projectName },
-    content: {
-      assignees,
-      author: { url: authorUrl, name: authorName },
-      title,
-      url: itemUrl,
-      number: itemNumber,
-    },
-    fieldValueByName: { name: updated_value },
-  } = node
   return replaceKeys(message, {
-    authorUrl: authorUrl ? authorUrl : creatorUrl,
-    number,
-    authorName: authorName ? authorName : creatorName,
-    projectUrl,
-    itemUrl,
-    updated_value,
-    itemNumber,
-    projectName,
-    title: escapeMarkdown(title),
     content_type,
-    assignees: parseAssignees(assignees),
+    ...getKeysFromNode({ node }),
     ...extra,
   })
+}
+
+function getKeysFromNode({ node }) {
+  const { creator, project, content, fieldValueByName } = node
+  return {
+    authorUrl: content?.author?.url ? content.author.url : creator?.url,
+    number: project.number,
+    authorName: content?.author?.name ? content.author.name : creator?.login,
+    projectUrl: project.url,
+    itemUrl: content?.url,
+    updated_value: fieldValueByName?.name,
+    itemNumber: content?.number,
+    projectName: project.title,
+    title: escapeMarkdown(content?.title),
+    assignees: parseAssignees(content?.assignees),
+  }
 }
 
 function replaceKeys(message, valuesToReplace) {

@@ -214,4 +214,47 @@ test('POST /webhook', async t => {
       })
     }
   )
+
+  t.test(
+    'sends graphql and slack bot requests with invalid getProjectItemById:',
+    async t => {
+      const slackStub = sinon.stub()
+      const graphqlClientStub = sinon.stub()
+      graphqlClientStub.onFirstCall().rejects(new Error())
+      graphqlClientStub.onSecondCall().resolves(getProjectItemByIdResponse)
+      graphqlClientStub.onThirdCall().resolves(getProjectItemByIdResponse)
+      const app = await build(t, {
+        graphqlClient: async () => graphqlClientStub,
+        slackApp: async function slackApp() {
+          return {
+            client: {
+              chat: {
+                postMessage: params => {
+                  slackStub()
+                  return params
+                },
+              },
+            },
+          }
+        },
+      })
+
+      t.test('item deleted', async t => {
+        const signature = createSignature(
+          itemDeleted,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemDeleted,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(slackStub.callCount, 1)
+        t.equal(res.statusCode, 200)
+      })
+    }
+  )
 })
