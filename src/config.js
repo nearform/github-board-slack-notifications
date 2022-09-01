@@ -1,5 +1,7 @@
 import S from 'fluent-json-schema'
 import envSchema from 'env-schema'
+import rcfile from 'rcfile'
+import { join } from 'path'
 
 const schema = S.object()
   .prop('SLACK_TOKEN', S.string().required())
@@ -16,3 +18,8 @@ const config = envSchema({
 })
 
 export default config
+
+export const notificationConfig = rcfile('notification-config', {
+  cwd: join(process.cwd(), 'config'),
+  configFileName: 'notification-config',
+})

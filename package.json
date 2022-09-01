@@ -63,6 +63,7 @@
     "fastify-plugin": "^4.2.1",
     "fluent-json-schema": "^3.1.0",
     "http-errors": "^2.0.0",
-    "pino-pretty": "^9.1.0"
+    "pino-pretty": "^9.1.0",
+    "rcfile": "^1.0.3"
   }
 }

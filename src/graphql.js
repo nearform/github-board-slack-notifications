@@ -56,6 +56,19 @@ export const getProjectItemById = async ({ graphqlClient, id }) => {
               title
               body
             }
+            ... on PullRequest {
+              id
+              title
+              body
+              url
+              author {
+                url
+                login
+                ... on User {
+                  name
+                }
+              }
+            }
           }
           fieldValueByName(name: "Status") {
             ... on ProjectV2ItemFieldSingleSelectValue {
@@ -80,6 +93,14 @@ export const getActivityById = async ({ graphqlClient, id }) => {
         ... on Issue {
           number
           title
+          url,
+          author {
+            url
+            login
+            ... on User {
+              name
+            }
+          }
         }
       ... on PullRequest {
           number
@@ -111,6 +132,20 @@ export const getProjectById = async ({ graphqlClient, id }) => {
         }
       }
     }`,
+    id,
+  })
+}
+
+export const getChangedItem = async ({ graphqlClient, id }) => {
+  return graphqlClient({
+    query: `query getChangesDetail($id: ID!){
+    node(id: $id) {
+      ... on ProjectV2SingleSelectField {
+        id
+        name
+      }
+    }
+  }`,
     id,
   })
 }

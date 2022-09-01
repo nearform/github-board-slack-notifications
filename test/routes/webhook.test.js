@@ -1,22 +1,18 @@
 'use strict'
 
-import { test } from 'tap'
-import {
-  build,
-  isMarkdownEscapeValid,
-  generateRandomString,
-} from '../helper.js'
-import config from '../../src/config.js'
-import { createSignature } from '../../lib/verify-request.js'
 import sinon from 'sinon'
-import itemCreated from '../fixtures/webhook/itemCreated.js'
-import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
-import itemDeleted from '../fixtures/webhook/itemDeleted.js'
+import { test } from 'tap'
+import { createSignature } from '../../lib/verify-request.js'
+import config from '../../src/config.js'
 import getProjectItemByIdResponse from '../fixtures/graphql/getProjectItemByIdResponse.js'
+import itemCreated from '../fixtures/webhook/itemCreated.js'
+import itemDeleted from '../fixtures/webhook/itemDeleted.js'
+import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
 import pullRequestCreated from '../fixtures/webhook/pullRequestCreated.js'
 import pullRequestDeleted from '../fixtures/webhook/pullRequestDeleted.js'
 import pullRequestMoved from '../fixtures/webhook/pullRequestMoved.js'
-import { escapeMarkdown } from '../../src/messages.js'
+import itemInvalidNodeId from '../fixtures/webhook/itemInvalidNodeId.js'
+import { build } from '../helper.js'
 
 test('POST /webhook', async t => {
   t.afterEach(() => {
@@ -180,6 +176,9 @@ test('POST /webhook', async t => {
         t.equal(res.statusCode, 200)
       })
 
+      /**
+       * the request should be ignored because it is of type reordered
+       */
       t.test('pr moved', async t => {
         const signature = createSignature(
           pullRequestMoved,
@@ -193,14 +192,68 @@ test('POST /webhook', async t => {
             'X-Hub-Signature-256': signature,
           },
         })
-        t.equal(slackStub.callCount, 1)
+        t.equal(slackStub.callCount, 0)
         t.equal(res.statusCode, 200)
       })
 
-      t.test('markdown is escaped correctly', async t => {
-        const testString = escapeMarkdown(generateRandomString(50))
-        const isValid = isMarkdownEscapeValid(testString)
-        t.equal(isValid, true)
+      t.test('item with a non existent node_id', async t => {
+        const signature = createSignature(
+          itemInvalidNodeId,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemInvalidNodeId,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(slackStub.callCount, 1)
+        t.equal(res.statusCode, 200)
+      })
+    }
+  )
+
+  t.test(
+    'sends graphql and slack bot requests with invalid getProjectItemById:',
+    async t => {
+      const slackStub = sinon.stub()
+      const graphqlClientStub = sinon.stub()
+      graphqlClientStub.onFirstCall().rejects(new Error())
+      graphqlClientStub.onSecondCall().resolves(getProjectItemByIdResponse)
+      graphqlClientStub.onThirdCall().resolves(getProjectItemByIdResponse)
+      const app = await build(t, {
+        graphqlClient: async () => graphqlClientStub,
+        slackApp: async function slackApp() {
+          return {
+            client: {
+              chat: {
+                postMessage: params => {
+                  slackStub()
+                  return params
+                },
+              },
+            },
+          }
+        },
+      })
+
+      t.test('item deleted', async t => {
+        const signature = createSignature(
+          itemDeleted,
+          config.ORG_WEBHOOK_SECRET
+        )
+        const res = await app.inject({
+          url: '/webhook',
+          method: 'POST',
+          body: itemDeleted,
+          headers: {
+            'X-Hub-Signature-256': signature,
+          },
+        })
+        t.equal(slackStub.callCount, 1)
+        t.equal(res.statusCode, 200)
       })
     }
   )
