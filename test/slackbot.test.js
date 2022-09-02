@@ -110,7 +110,7 @@ test('test slackbot', async t => {
   })
 
   t.test('format message fills authoUrl correctly', async t => {
-    const message = '{authorUrl} {authorName}'
+    const message = '{authorUrl}{authorName}'
     const authorUrl = 'https://api.github.com/users/some-author'
     const authorName = 'some-author'
     const creatorUrl = 'https://api.github.com/users/some-creator'
@@ -127,7 +127,27 @@ test('test slackbot', async t => {
     node.content.author = {}
     const formattedMessageWithCreator = formatMessage({ message, node })
 
-    t.equal(`${authorUrl} ${authorName}`, formattedMessageWithAuthor)
-    t.equal(`${creatorUrl} ${creatorName}`, formattedMessageWithCreator)
+    t.equal(`${authorUrl}| ${authorName}`, formattedMessageWithAuthor)
+    t.equal(`${creatorUrl}| ${creatorName}`, formattedMessageWithCreator)
+  })
+
+  t.test('undefined parameters are ignored', async t => {
+    const content_type = 'DraftIssue'
+    const title = 'random-title'
+    const message =
+      '💡 {content_type} _<{itemUrl}{itemNumber}{title}>_ Status has been changed to Done 📌'
+    const expectedResult = `💡 ${content_type} _<${title}>_ Status has been changed to Done 📌`
+    const node = {
+      content: {
+        title,
+      },
+      project: {},
+    }
+    const formattedMessage = formatMessage({
+      content_type,
+      message,
+      node,
+    })
+    t.equal(expectedResult, formattedMessage)
   })
 })

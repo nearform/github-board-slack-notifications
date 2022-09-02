@@ -1,27 +1,27 @@
 {
     "actions": {
         "created": {
-            "message": "💡 <{authorUrl}| {authorName}> has a created a {content_type} titled _<{itemUrl}| #{itemNumber} {title}>_ in <{projectUrl}| {projectName}> ➕️"
+            "message": "💡 <{authorUrl}{authorName}> has a created a {content_type} titled _<{itemUrl}{itemNumber}{title}>_ in <{projectUrl}{projectName}> ➕️"
         },
         "deleted": {
-            "message": "💡 {content_type} _<{itemUrl}| #{itemNumber} {title}>_ has been deleted from <{projectUrl}| {projectName}> ❌"
+            "message": "💡 {content_type} _<{itemUrl}{itemNumber}{title}>_ has been deleted from <{projectUrl}{projectName}> ❌"
         },
         "converted": {
-            "message": "💡 {content_type} _<{itemUrl}| #{itemNumber} {title}>_ has been converted 🔄",
+            "message": "💡 {content_type} _<{itemUrl}{itemNumber}{title}>_ has been converted 🔄",
             "changes": {
                 "Issue": {
-                    "message": "💡 <{authorUrl}| {authorName}> has a created a {content_type} titled _<{itemUrl}| #{itemNumber} {title})}>_ in <{projectUrl}| {projectName}> 🚩"
+                    "message": "💡 <{authorUrl}{authorName}> has a created a {content_type} titled _<{itemUrl}{itemNumber}{title}>_ in <{projectUrl}{projectName}> 🚩"
                 }
             }
         },
         "edited": {
-            "message": "💡 {content_type} _<{itemUrl}| #{itemNumber} {title}>_ has been edited 📝",
+            "message": "💡 {content_type} _<{itemUrl}{itemNumber}{title}>_ has been edited 📝",
             "changes": {
                 "single_select": {
-                    "message": "💡 {content_type} _<{itemUrl}| #{itemNumber} {title}>_ {changed_field} has been changed to {updated_value} 📌"
+                    "message": "💡 {content_type} _<{itemUrl}{itemNumber}{title}>_ {changed_field} has been changed to {updated_value} 📌"
                 },
                 "assignees": {
-                    "message": "💡 {content_type} _<{itemUrl}| #{itemNumber} {title}>_ has been assigned to {assignees} 👤"
+                    "message": "💡 {content_type} _<{itemUrl}{itemNumber}{title}>_ has been assigned to {assignees} 👤"
                 }
             }
         }
