@@ -10,6 +10,7 @@
     "prepare": "husky install",
     "build": "esbuild lambda.js --bundle --minify --format=cjs --platform=node --target=node16 --outdir=dist",
     "deploy": "npm run build",
+    "postbuild": "ncp config dist/config",
     "deploy:cd": "npm run deploy",
     "lint:fix": "eslint . --fix",
     "dev": "nodemon server"
@@ -36,6 +37,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
+    "ncp": "^2.0.0",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "sinon": "^14.0.0",
