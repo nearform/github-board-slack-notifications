@@ -16,7 +16,7 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_iam_policy" "lambda_logging" {
-  name        = "lambda_logging"
+  name        = "${var.project}-${var.env}-lambda_logging"
   path        = "/"
   description = "IAM policy for logging from a lambda"
 
