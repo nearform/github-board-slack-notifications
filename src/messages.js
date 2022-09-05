@@ -52,17 +52,25 @@ export function formatMessage({ content_type, node, message, extra }) {
 function getKeysFromNode({ node }) {
   const { creator, project, content, fieldValueByName } = node
   return {
-    authorUrl: content?.author?.url ? content.author.url : creator?.url,
+    authorUrl: addPipeToUrl(content?.author?.url || creator?.url),
     number: project.number,
-    authorName: content?.author?.name ? content.author.name : creator?.login,
-    projectUrl: project.url,
-    itemUrl: content?.url,
+    authorName: content?.author?.name || creator?.login,
+    projectUrl: addPipeToUrl(project.url),
+    itemUrl: addPipeToUrl(content?.url),
     updated_value: fieldValueByName?.name,
-    itemNumber: content?.number,
+    itemNumber: addHashtagToNumber(content?.number),
     projectName: project.title,
     title: escapeMarkdown(content?.title),
     assignees: parseAssignees(content?.assignees),
   }
+}
+
+function addPipeToUrl(url) {
+  return url ? `${url}| ` : ''
+}
+
+function addHashtagToNumber(number) {
+  return number ? `#${number} ` : ''
 }
 
 function replaceKeys(message, valuesToReplace) {
@@ -91,14 +99,6 @@ export const markdownEscapes = [
   {
     regex: /\)/g,
     replacement: '\\)',
-  },
-  {
-    regex: /\[/g,
-    replacement: '\\[',
-  },
-  {
-    regex: /\]/g,
-    replacement: '\\]',
   },
   {
     regex: /</g,
