@@ -103,14 +103,6 @@ export const markdownEscapes = [
     replacement: '\\)',
   },
   {
-    regex: /\[/g,
-    replacement: '\\[',
-  },
-  {
-    regex: /\]/g,
-    replacement: '\\]',
-  },
-  {
     regex: /</g,
     replacement: '&lt;',
   },
