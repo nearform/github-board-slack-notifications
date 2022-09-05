@@ -52,11 +52,9 @@ export function formatMessage({ content_type, node, message, extra }) {
 function getKeysFromNode({ node }) {
   const { creator, project, content, fieldValueByName } = node
   return {
-    authorUrl: addPipeToUrl(
-      content?.author?.url ? content.author.url : creator?.url
-    ),
+    authorUrl: addPipeToUrl(content?.author?.url || creator?.url),
     number: project.number,
-    authorName: content?.author?.name ? content.author.name : creator?.login,
+    authorName: content?.author?.name || creator?.login,
     projectUrl: addPipeToUrl(project.url),
     itemUrl: addPipeToUrl(content?.url),
     updated_value: fieldValueByName?.name,
