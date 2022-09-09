@@ -1,11 +1,9 @@
 name: Continuous Integration
-
 on:
   push:
     branches:
       - master
   pull_request:
-
 jobs:
   test:
     name: Lint and test
@@ -14,19 +12,18 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: .nvmrc
       - run: npm i
       - run: npm run lint
       - name: Test
         env:
-            SLACK_TOKEN: ${{ secrets.DEV_SLACK_TOKEN }}
-            SLACK_SIGNING_SECRET: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
-            SLACK_CHANNEL: ${{ secrets.DEV_SLACK_CHANNEL }}
-            ORG_WEBHOOK_SECRET: ${{ secrets.ORG_WEBHOOK_SECRET }}
-            ORG_PRIVATE_KEY: ${{ secrets.ORG_PRIVATE_KEY }}
-            ORG_APP_ID: ${{ secrets.ORG_APP_ID }}
+          SLACK_TOKEN: ${{ secrets.DEV_SLACK_TOKEN }}
+          SLACK_SIGNING_SECRET: ${{ secrets.DEV_SLACK_SIGNING_SECRET }}
+          SLACK_CHANNEL: ${{ secrets.DEV_SLACK_CHANNEL }}
+          ORG_WEBHOOK_SECRET: ${{ secrets.ORG_WEBHOOK_SECRET }}
+          ORG_PRIVATE_KEY: ${{ secrets.ORG_PRIVATE_KEY }}
+          ORG_APP_ID: ${{ secrets.ORG_APP_ID }}
         run: npm test
-
   automerge:
     name: Merge dependabot's PRs
     needs: test
@@ -36,5 +33,3 @@ jobs:
       contents: write
     steps:
       - uses: fastify/github-action-merge-dependabot@v3
-        with:
-          github-token: ${{ secrets.github_token }}
