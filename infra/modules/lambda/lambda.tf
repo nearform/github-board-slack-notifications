@@ -5,7 +5,7 @@ resource "aws_lambda_function" "board_notification" {
   function_name = "${var.project}-${var.env}"
   role          = aws_iam_role.lambda_role.arn
   handler       = "lambda.handler"
-  runtime       = "nodejs16.x"
+  runtime       = "nodejs18.x"
   timeout       = 10
 
   environment {
