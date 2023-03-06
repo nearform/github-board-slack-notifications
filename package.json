@@ -33,7 +33,7 @@
     "aws-cdk": "^2.67.0",
     "esbuild": "^0.17.10",
     "eslint": "^8.35.0",
-    "eslint-config-prettier": "^8.6.0",
+    "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.3",
     "lint-staged": "^13.1.2",
