@@ -35,11 +35,7 @@ export async function sendNotification({ request, app }) {
 
   const { node } = await getItem(request)
 
-  if (
-    excludedAuthors.includes(node.content?.author?.login) ||
-    excludedAuthors.includes(node.content?.content?.author?.login) ||
-    excludedAuthors.includes(node.content?.creator?.login)
-  ) {
+  if (excludedAuthors.includes(node.content?.author?.login)) {
     return
   }
 
