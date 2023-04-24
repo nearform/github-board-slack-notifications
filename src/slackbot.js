@@ -18,6 +18,7 @@ async function sendMessage({ app, text, channels }) {
             text: {
               type: 'mrkdwn',
               text,
+              unfurl_links: false,
             },
           },
         ],
