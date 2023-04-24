@@ -106,6 +106,10 @@ export const getActivityById = async ({ graphqlClient, id }) => {
           number
           title
           url
+          author {
+            url
+            login
+          }
         }
       }
     }`,
