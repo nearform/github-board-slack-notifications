@@ -107,7 +107,6 @@ export const getActivityById = async ({ graphqlClient, id }) => {
           title
           url
           author {
-            url
             login
           }
         }
