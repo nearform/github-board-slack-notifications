@@ -6,6 +6,7 @@ import { createSignature } from '../../lib/verify-request.js'
 import config from '../../src/config.js'
 import getProjectItemByIdResponse from '../fixtures/graphql/getProjectItemByIdResponse.js'
 import itemCreated from '../fixtures/webhook/itemCreated.js'
+import itemCreatedDependabot from '../fixtures/webhook/itemCreatedDependabot.js'
 import itemDeleted from '../fixtures/webhook/itemDeleted.js'
 import itemMovedNoStatusToTodo from '../fixtures/webhook/itemMovedNoStatusToTodo.js'
 import pullRequestCreated from '../fixtures/webhook/pullRequestCreated.js'
@@ -80,7 +81,7 @@ test('POST /webhook', async t => {
       const app = await build(t, {
         // the authentication function returns a function
         graphqlClient: async () => () => {
-          return getProjectItemByIdResponse
+          return getProjectItemByIdResponse()
         },
         slackApp: async function slackApp() {
           return {
@@ -123,7 +124,8 @@ test('POST /webhook', async t => {
             'X-Hub-Signature-256': signature,
           },
         })
-        t.equal(slackStub.callCount, 1)
+        sinon.assert.calledOnce(slackStub)
+
         t.equal(res.statusCode, 200)
       })
       t.test('item deleted', async t => {
@@ -139,7 +141,8 @@ test('POST /webhook', async t => {
             'X-Hub-Signature-256': signature,
           },
         })
-        t.equal(slackStub.callCount, 1)
+        sinon.assert.calledOnce(slackStub)
+
         t.equal(res.statusCode, 200)
       })
 
@@ -172,7 +175,8 @@ test('POST /webhook', async t => {
             'X-Hub-Signature-256': signature,
           },
         })
-        t.equal(slackStub.callCount, 1)
+        sinon.assert.calledOnce(slackStub)
+
         t.equal(res.statusCode, 200)
       })
 
@@ -192,7 +196,7 @@ test('POST /webhook', async t => {
             'X-Hub-Signature-256': signature,
           },
         })
-        t.equal(slackStub.callCount, 0)
+        sinon.assert.notCalled(slackStub)
         t.equal(res.statusCode, 200)
       })
 
@@ -209,20 +213,160 @@ test('POST /webhook', async t => {
             'X-Hub-Signature-256': signature,
           },
         })
-        t.equal(slackStub.callCount, 1)
+        sinon.assert.calledOnce(slackStub)
+
         t.equal(res.statusCode, 200)
       })
     }
   )
+  t.test(`doesn't do anything if it's a dependabot action`, async t => {
+    const slackStub = sinon.stub()
+    const app = await build(t, {
+      // the authentication function returns a function
+      graphqlClient: async () => () => {
+        return getProjectItemByIdResponse('dependabot')
+      },
+      slackApp: async function slackApp() {
+        return {
+          client: {
+            chat: {
+              postMessage: params => {
+                slackStub()
+                return params
+              },
+            },
+          },
+        }
+      },
+    })
 
+    t.test('item created', async t => {
+      const signature = createSignature(
+        itemCreatedDependabot,
+        config.ORG_WEBHOOK_SECRET
+      )
+      const res = await app.inject({
+        url: '/webhook',
+        method: 'POST',
+        body: itemCreatedDependabot,
+        headers: {
+          'X-Hub-Signature-256': signature,
+        },
+      })
+      sinon.assert.notCalled(slackStub)
+      t.equal(res.statusCode, 200)
+    })
+
+    t.test('item updated', async t => {
+      const signature = createSignature(
+        itemMovedNoStatusToTodo,
+        config.ORG_WEBHOOK_SECRET
+      )
+      const res = await app.inject({
+        url: '/webhook',
+        method: 'POST',
+        body: itemMovedNoStatusToTodo,
+        headers: {
+          'X-Hub-Signature-256': signature,
+        },
+      })
+      sinon.assert.notCalled(slackStub)
+      t.equal(res.statusCode, 200)
+    })
+
+    t.test('item deleted', async t => {
+      const signature = createSignature(itemDeleted, config.ORG_WEBHOOK_SECRET)
+      const res = await app.inject({
+        url: '/webhook',
+        method: 'POST',
+        body: itemDeleted,
+        headers: {
+          'X-Hub-Signature-256': signature,
+        },
+      })
+      sinon.assert.notCalled(slackStub)
+      t.equal(res.statusCode, 200)
+    })
+
+    t.test('pr created', async t => {
+      const signature = createSignature(
+        pullRequestCreated,
+        config.ORG_WEBHOOK_SECRET
+      )
+      const res = await app.inject({
+        url: '/webhook',
+        method: 'POST',
+        body: pullRequestCreated,
+        headers: {
+          'X-Hub-Signature-256': signature,
+        },
+      })
+      sinon.assert.notCalled(slackStub)
+      t.equal(res.statusCode, 200)
+    })
+
+    t.test('pr deleted', async t => {
+      const signature = createSignature(
+        pullRequestDeleted,
+        config.ORG_WEBHOOK_SECRET
+      )
+      const res = await app.inject({
+        url: '/webhook',
+        method: 'POST',
+        body: pullRequestDeleted,
+        headers: {
+          'X-Hub-Signature-256': signature,
+        },
+      })
+      sinon.assert.notCalled(slackStub)
+      t.equal(res.statusCode, 200)
+    })
+
+    /**
+     * the request should be ignored because it is of type reordered
+     */
+    t.test('pr moved', async t => {
+      const signature = createSignature(
+        pullRequestMoved,
+        config.ORG_WEBHOOK_SECRET
+      )
+      const res = await app.inject({
+        url: '/webhook',
+        method: 'POST',
+        body: pullRequestMoved,
+        headers: {
+          'X-Hub-Signature-256': signature,
+        },
+      })
+      sinon.assert.notCalled(slackStub)
+      t.equal(res.statusCode, 200)
+    })
+
+    t.test('item with a non existent node_id', async t => {
+      const signature = createSignature(
+        itemInvalidNodeId,
+        config.ORG_WEBHOOK_SECRET
+      )
+      const res = await app.inject({
+        url: '/webhook',
+        method: 'POST',
+        body: itemInvalidNodeId,
+        headers: {
+          'X-Hub-Signature-256': signature,
+        },
+      })
+      sinon.assert.notCalled(slackStub)
+      t.equal(res.statusCode, 200)
+    })
+  })
   t.test(
     'sends graphql and slack bot requests with invalid getProjectItemById:',
     async t => {
       const slackStub = sinon.stub()
       const graphqlClientStub = sinon.stub()
       graphqlClientStub.onFirstCall().rejects(new Error())
-      graphqlClientStub.onSecondCall().resolves(getProjectItemByIdResponse)
-      graphqlClientStub.onThirdCall().resolves(getProjectItemByIdResponse)
+      graphqlClientStub.onSecondCall().resolves(getProjectItemByIdResponse())
+      graphqlClientStub.onThirdCall().resolves(getProjectItemByIdResponse())
       const app = await build(t, {
         graphqlClient: async () => graphqlClientStub,
         slackApp: async function slackApp() {
@@ -252,7 +396,8 @@ test('POST /webhook', async t => {
             'X-Hub-Signature-256': signature,
           },
         })
-        t.equal(slackStub.callCount, 1)
+        sinon.assert.calledOnce(slackStub)
+
         t.equal(res.statusCode, 200)
       })
     }

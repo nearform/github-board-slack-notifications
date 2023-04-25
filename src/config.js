@@ -23,3 +23,7 @@ export const notificationConfig = rcfile('notification-config', {
   cwd: join(process.cwd(), 'config'),
   configFileName: 'notification-config',
 })
+
+// Adding a new github username here all the creation / changes on the PRs
+// and Issues from this author will be excluded and not notified.
+export const excludedAuthors = ['dependabot']

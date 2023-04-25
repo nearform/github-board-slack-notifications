@@ -1,8 +1,8 @@
-export default {
+export default (user = 'testuser') => ({
   node: {
     creator: {
-      url: 'https://github.com/testuser',
-      login: 'testuser',
+      url: `https://github.com/${user}`,
+      login: user,
     },
     id: 'PVTI_lADOBpWafM4AEgSvzgB_LQk',
     project: {
@@ -23,8 +23,8 @@ export default {
         nodes: [],
       },
       author: {
-        url: 'https://github.com/testuser',
-        login: 'testuser',
+        url: `https://github.com/${user}`,
+        login: user,
         name: 'Test User',
       },
       id: 'I_kwDOHwYncM5PZJ_7',
@@ -55,4 +55,4 @@ export default {
       ],
     },
   },
-}
+})

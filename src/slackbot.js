@@ -1,5 +1,5 @@
 import { getRawMessage, formatMessage } from './messages.js'
-import { notificationConfig } from './config.js'
+import { excludedAuthors, notificationConfig } from './config.js'
 import {
   getProjectById,
   getActivityById,
@@ -34,6 +34,10 @@ export async function sendNotification({ request, app }) {
   if (!actionConfig) return
 
   const { node } = await getItem(request)
+
+  if (excludedAuthors.includes(node.content?.author?.login)) {
+    return
+  }
 
   const message = formatMessage({
     content_type: getContentType(request),
