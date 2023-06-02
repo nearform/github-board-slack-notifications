@@ -30,7 +30,7 @@
     "@commitlint/cli": "^17.6.5",
     "@commitlint/config-conventional": "^17.6.5",
     "@istanbuljs/esm-loader-hook": "^0.2.0",
-    "aws-cdk": "^2.81.0",
+    "aws-cdk": "^2.82.0",
     "esbuild": "^0.17.19",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
