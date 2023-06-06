@@ -54,7 +54,7 @@
     "@octokit/auth-app": "^4.0.13",
     "@octokit/core": "^4.2.1",
     "@octokit/graphql": "^5.0.6",
-    "@octokit/plugin-retry": "^5.0.0",
+    "@octokit/plugin-retry": "^5.0.1",
     "@slack/bolt": "^3.13.1",
     "aws-cdk-lib": "^2.82.0",
     "constructs": "^10.2.44",
