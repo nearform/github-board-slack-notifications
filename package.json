@@ -56,7 +56,7 @@
     "@octokit/graphql": "^6.0.1",
     "@octokit/plugin-retry": "^5.0.4",
     "@slack/bolt": "^3.13.1",
-    "aws-cdk-lib": "^2.85.0",
+    "aws-cdk-lib": "^2.86.0",
     "constructs": "^10.2.67",
     "desm": "^1.3.0",
     "env-schema": "^5.2.0",
