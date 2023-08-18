@@ -101,11 +101,11 @@ test('test slackbot', async t => {
 
   t.test('assignees are parse correctly', async t => {
     const parsedAssignees = createRandomAssignees().map(assignee =>
-      parseAssignees(assignee)
+      parseAssignees(assignee),
     )
     t.equal(
       true,
-      parsedAssignees.every(parsedAssignee => Array.isArray(parsedAssignee))
+      parsedAssignees.every(parsedAssignee => Array.isArray(parsedAssignee)),
     )
   })
 

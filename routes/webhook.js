@@ -21,17 +21,17 @@ const schema = {
           S.object()
             .required()
             .prop('login', S.string().required())
-            .prop('html_url', S.string().required())
+            .prop('html_url', S.string().required()),
         )
         .prop('created_at', S.string().required())
-        .prop('updated_at', S.string().required())
+        .prop('updated_at', S.string().required()),
     )
     .prop('changes', S.object())
     .prop('organization', S.object())
     .prop('sender', S.object())
     .prop(
       'installation',
-      S.object().required().prop('id', S.integer().required())
+      S.object().required().prop('id', S.integer().required()),
     ),
 }
 
@@ -57,6 +57,6 @@ export default async function (fastify) {
         }
       }
       return { ok: true }
-    }
+    },
   )
 }
