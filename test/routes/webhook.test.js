@@ -72,7 +72,7 @@ test('POST /webhook', async t => {
       })
 
       t.equal(res.statusCode, 401)
-    }
+    },
   )
   t.test(
     'sends graphql and slack bot requests with valid payloads:',
@@ -99,7 +99,7 @@ test('POST /webhook', async t => {
       t.test('item created', async t => {
         const signature = createSignature(
           itemCreated,
-          config.ORG_WEBHOOK_SECRET
+          config.ORG_WEBHOOK_SECRET,
         )
         const res = await app.inject({
           url: '/webhook',
@@ -114,7 +114,7 @@ test('POST /webhook', async t => {
       t.test('item updated', async t => {
         const signature = createSignature(
           itemMovedNoStatusToTodo,
-          config.ORG_WEBHOOK_SECRET
+          config.ORG_WEBHOOK_SECRET,
         )
         const res = await app.inject({
           url: '/webhook',
@@ -131,7 +131,7 @@ test('POST /webhook', async t => {
       t.test('item deleted', async t => {
         const signature = createSignature(
           itemDeleted,
-          config.ORG_WEBHOOK_SECRET
+          config.ORG_WEBHOOK_SECRET,
         )
         const res = await app.inject({
           url: '/webhook',
@@ -149,7 +149,7 @@ test('POST /webhook', async t => {
       t.test('pr created', async t => {
         const signature = createSignature(
           pullRequestCreated,
-          config.ORG_WEBHOOK_SECRET
+          config.ORG_WEBHOOK_SECRET,
         )
         const res = await app.inject({
           url: '/webhook',
@@ -165,7 +165,7 @@ test('POST /webhook', async t => {
       t.test('pr deleted', async t => {
         const signature = createSignature(
           pullRequestDeleted,
-          config.ORG_WEBHOOK_SECRET
+          config.ORG_WEBHOOK_SECRET,
         )
         const res = await app.inject({
           url: '/webhook',
@@ -186,7 +186,7 @@ test('POST /webhook', async t => {
       t.test('pr moved', async t => {
         const signature = createSignature(
           pullRequestMoved,
-          config.ORG_WEBHOOK_SECRET
+          config.ORG_WEBHOOK_SECRET,
         )
         const res = await app.inject({
           url: '/webhook',
@@ -203,7 +203,7 @@ test('POST /webhook', async t => {
       t.test('item with a non existent node_id', async t => {
         const signature = createSignature(
           itemInvalidNodeId,
-          config.ORG_WEBHOOK_SECRET
+          config.ORG_WEBHOOK_SECRET,
         )
         const res = await app.inject({
           url: '/webhook',
@@ -217,7 +217,7 @@ test('POST /webhook', async t => {
 
         t.equal(res.statusCode, 200)
       })
-    }
+    },
   )
   t.test(`doesn't do anything if it's a dependabot action`, async t => {
     const slackStub = sinon.stub()
@@ -243,7 +243,7 @@ test('POST /webhook', async t => {
     t.test('item created', async t => {
       const signature = createSignature(
         itemCreatedDependabot,
-        config.ORG_WEBHOOK_SECRET
+        config.ORG_WEBHOOK_SECRET,
       )
       const res = await app.inject({
         url: '/webhook',
@@ -260,7 +260,7 @@ test('POST /webhook', async t => {
     t.test('item updated', async t => {
       const signature = createSignature(
         itemMovedNoStatusToTodo,
-        config.ORG_WEBHOOK_SECRET
+        config.ORG_WEBHOOK_SECRET,
       )
       const res = await app.inject({
         url: '/webhook',
@@ -291,7 +291,7 @@ test('POST /webhook', async t => {
     t.test('pr created', async t => {
       const signature = createSignature(
         pullRequestCreated,
-        config.ORG_WEBHOOK_SECRET
+        config.ORG_WEBHOOK_SECRET,
       )
       const res = await app.inject({
         url: '/webhook',
@@ -308,7 +308,7 @@ test('POST /webhook', async t => {
     t.test('pr deleted', async t => {
       const signature = createSignature(
         pullRequestDeleted,
-        config.ORG_WEBHOOK_SECRET
+        config.ORG_WEBHOOK_SECRET,
       )
       const res = await app.inject({
         url: '/webhook',
@@ -328,7 +328,7 @@ test('POST /webhook', async t => {
     t.test('pr moved', async t => {
       const signature = createSignature(
         pullRequestMoved,
-        config.ORG_WEBHOOK_SECRET
+        config.ORG_WEBHOOK_SECRET,
       )
       const res = await app.inject({
         url: '/webhook',
@@ -345,7 +345,7 @@ test('POST /webhook', async t => {
     t.test('item with a non existent node_id', async t => {
       const signature = createSignature(
         itemInvalidNodeId,
-        config.ORG_WEBHOOK_SECRET
+        config.ORG_WEBHOOK_SECRET,
       )
       const res = await app.inject({
         url: '/webhook',
@@ -386,7 +386,7 @@ test('POST /webhook', async t => {
       t.test('item deleted', async t => {
         const signature = createSignature(
           itemDeleted,
-          config.ORG_WEBHOOK_SECRET
+          config.ORG_WEBHOOK_SECRET,
         )
         const res = await app.inject({
           url: '/webhook',
@@ -400,6 +400,6 @@ test('POST /webhook', async t => {
 
         t.equal(res.statusCode, 200)
       })
-    }
+    },
   )
 })

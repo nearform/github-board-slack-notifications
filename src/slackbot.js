@@ -23,7 +23,7 @@ async function sendMessage({ app, text, channels }) {
           },
         ],
       })
-    })
+    }),
   )
 }
 
