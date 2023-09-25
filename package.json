@@ -32,7 +32,7 @@
     "@istanbuljs/esm-loader-hook": "^0.2.0",
     "aws-cdk": "^2.96.2",
     "esbuild": "^0.19.3",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "husky": "^8.0.3",
