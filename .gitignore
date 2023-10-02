@@ -19,3 +19,4 @@ logs
 vscode
 
 .terraform
+.tap
