@@ -6,4 +6,4 @@ exclude:
   - test/helper.js
   - plugins/authenticate-graphql.js
   - plugins/init-slack-app.js
-  - exclude=src/graphql.js
+  - src/graphql.js
