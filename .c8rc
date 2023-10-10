@@ -1,0 +1,12 @@
+{
+  "check-coverage": true,
+  "temp-directory": ".tap/coverage",
+  "exclude": [
+    "plugins/authenticate-graphql.js",
+    "plugins/init-slack-app.js"
+  ],
+  "lines": 66,
+  "functions": 100,
+  "branches": 50,
+  "statements": 66
+}
