@@ -9,12 +9,10 @@ node_modules
 # OS X
 .DS_Store
 .env
-nyc_output
 .cdk.staging
 cdk.out
 dist
-coverage
-.nyc_output
+.tap
 logs
 vscode
 

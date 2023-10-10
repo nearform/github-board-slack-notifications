@@ -1,12 +1,7 @@
-lines: 66
-branches: 50
-statements: 66
-node-arg:
-  - --no-warnings
-  - --experimental-loader
-  - "@istanbuljs/esm-loader-hook"
-nyc-arg:
-  - --exclude=plugins/authenticate-graphql.js
-  - --exclude=plugins/init-slack-app.js
-  - --exclude=src/graphql.js
-test-ignore: test/helper.js
+allow-incomplete-coverage: true
+coverage-report:
+  - none
+include:
+ - "test/**/*.test.js"
+exclude:
+ - "test/helper.js"
