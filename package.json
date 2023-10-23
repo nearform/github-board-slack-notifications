@@ -42,7 +42,7 @@
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "sinon": "^16.1.0",
-    "tap": "^18.5.1"
+    "tap": "^18.5.2"
   },
   "lint-staged": {
     "*.{js,jsx}": "eslint --cache --fix"
