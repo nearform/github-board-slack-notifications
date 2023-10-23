@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/nearform/github-board-slack-notifications#readme",
   "devDependencies": {
-    "@commitlint/cli": "^17.7.2",
+    "@commitlint/cli": "^18.0.0",
     "@commitlint/config-conventional": "^17.8.0",
     "@istanbuljs/esm-loader-hook": "^0.2.0",
     "aws-cdk": "^2.102.0",
