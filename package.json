@@ -64,7 +64,7 @@
     "fastify": "^4.24.3",
     "fastify-cli": "^5.9.0",
     "fastify-plugin": "^4.5.1",
-    "fluent-json-schema": "^4.1.2",
+    "fluent-json-schema": "^4.2.1",
     "http-errors": "^2.0.0",
     "pino-pretty": "^10.2.3",
     "rcfile": "^1.0.3"
