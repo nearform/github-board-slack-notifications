@@ -1,6 +1,6 @@
 {
   "name": "github-board-slack-notifications",
-  "version": "1.5.14",
+  "version": "1.5.15",
   "description": "The purpose of this project is to sent notifications to a Slack channel for any changes that are performed in a Github board (Projects beta). The Github board and Slack channel pairs are configurable.",
   "main": "dist/lambda.js",
   "type": "module",
