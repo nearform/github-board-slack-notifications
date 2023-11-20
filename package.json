@@ -48,7 +48,7 @@
     "*.{js,jsx}": "eslint --cache --fix"
   },
   "dependencies": {
-    "@fastify/aws-lambda": "^3.4.2",
+    "@fastify/aws-lambda": "^3.5.0",
     "@fastify/cors": "^8.4.1",
     "@fastify/env": "^4.3.0",
     "@fastify/sensible": "^5.5.0",
