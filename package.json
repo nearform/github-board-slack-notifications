@@ -52,7 +52,7 @@
     "@fastify/cors": "^8.5.0",
     "@fastify/env": "^4.3.0",
     "@fastify/sensible": "^5.5.0",
-    "@octokit/auth-app": "^6.0.2",
+    "@octokit/auth-app": "^6.0.3",
     "@octokit/core": "^5.0.2",
     "@octokit/graphql": "^7.0.2",
     "@octokit/plugin-retry": "^6.0.1",
